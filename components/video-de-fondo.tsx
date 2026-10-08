@@ -1,9 +1,15 @@
 "use client";
 
 import Image from "next/image";
+import { useSyncExternalStore } from "react";
 import { useMenosMovimiento } from "@/lib/use-menos-movimiento";
 
 type Props = { src: string; poster: string };
+
+function suscribirACarga(avisar: () => void) {
+  window.addEventListener("load", avisar);
+  return () => window.removeEventListener("load", avisar);
+}
 
 /**
  * Video de fondo sin sonido, en bucle. Debajo siempre está su cuadro fijo: se ve
@@ -13,12 +19,19 @@ type Props = { src: string; poster: string };
 export function VideoDeFondo({ src, poster }: Props) {
   // En el servidor se asume «reducir movimiento»: el video se suma recién en el navegador.
   const menosMovimiento = useMenosMovimiento(true);
+  // El video pesa varios megas: empieza a bajar recién cuando el resto de la página
+  // terminó de cargar, para no quitarle velocidad al título y a las fotos.
+  const paginaCargada = useSyncExternalStore(
+    suscribirACarga,
+    () => document.readyState === "complete",
+    () => false,
+  );
 
   return (
     <div aria-hidden="true" className="absolute inset-0">
       {/* El auto del video pasa un poco a la derecha del centro: el recorte del celular lo sigue. */}
       <Image src={poster} alt="" fill preload sizes="100vw" className="object-cover object-[62%_50%]" />
-      {!menosMovimiento && (
+      {!menosMovimiento && paginaCargada && (
         <video
           src={src}
           autoPlay
