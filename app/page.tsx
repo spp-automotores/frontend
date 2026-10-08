@@ -1,17 +1,29 @@
-// Página provisoria mientras se arma el sitio. Usa la paleta y las dos
-// tipografías para comprobar que la base del proyecto está bien cargada.
-export default function Home() {
+import { BarraSuperior } from "@/components/barra-superior";
+import { Entregas } from "@/components/inicio/entregas";
+import { PorQueSpp } from "@/components/inicio/por-que-spp";
+import { Portada } from "@/components/inicio/portada";
+import { RecienIngresados } from "@/components/inicio/recien-ingresados";
+import { Servicios } from "@/components/inicio/servicios";
+import { VendeTuAuto } from "@/components/inicio/vende-tu-auto";
+import { Pie } from "@/components/pie";
+import { traerRecienIngresados } from "@/lib/autos";
+import { entregasDeEjemplo, videoDeEjemplo } from "@/lib/ejemplo";
+
+export default async function Inicio() {
+  const autos = await traerRecienIngresados();
+
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
-      <h1 className="font-heading text-5xl font-extrabold uppercase tracking-tight [font-stretch:125%] sm:text-7xl">
-        SPP Automotores
-      </h1>
-      <p className="font-serif text-3xl italic text-highlight sm:text-4xl">
-        Muy pronto.
-      </p>
-      <p className="max-w-md text-muted-foreground">
-        Estamos preparando el sitio.
-      </p>
-    </main>
+    <>
+      <BarraSuperior />
+      <main className="flex-1">
+        <Portada video={videoDeEjemplo} />
+        <RecienIngresados autos={autos} />
+        <PorQueSpp />
+        <Servicios />
+        <Entregas fotos={entregasDeEjemplo} />
+        <VendeTuAuto />
+      </main>
+      <Pie />
+    </>
   );
 }
