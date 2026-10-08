@@ -22,6 +22,12 @@ leer cualquiera, incluido el cliente: nada de claves, datos personales ni notas 
 Las versiones están fijas en `package.json` (sin `^`, por `.npmrc`). Para subir una, cambiarla a
 propósito y correr `build` y `lint`.
 
+## Flujo de ramas
+
+Todo cambio entra por pull request: rama de trabajo (desde `dev`) → `dev` → `staging` → `main`.
+Detalle en `docs/flujo-de-ramas.md`. Nunca unir un pull request sin que lo pida una persona, y nunca
+borrar ramas.
+
 ## Comandos
 
 `npm run dev` · `npm run build` (incluye el chequeo de tipos) · `npm run lint`. Antes de dar algo por
