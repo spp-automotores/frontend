@@ -106,3 +106,19 @@
     scroll-behavior: smooth;
   }
 }
+
+/* Aparición suave de las secciones (components/aparecer.tsx). Sólo opacidad y
+   posición; con «reducir movimiento» no se aplica y las secciones se ven directamente. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-aparecer] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+      transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  [data-aparecer][data-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+}
