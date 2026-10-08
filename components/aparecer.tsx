@@ -1,34 +1,22 @@
 "use client";
 
-import { type ReactNode, useEffect, useRef } from "react";
+import { motion } from "motion/react";
+import type { ReactNode } from "react";
+import { useMenosMovimiento } from "@/lib/use-menos-movimiento";
 
-/**
- * La sección aparece suave al llegar a ella. La animación es CSS (ver `[data-aparecer]`
- * en `app/globals.css`); acá sólo se avisa cuándo entra en pantalla. Con «reducir
- * movimiento», el CSS no se aplica y la sección se ve directamente.
- */
+/** La sección aparece suave al llegar a ella. Con «reducir movimiento», aparece sin moverse. */
 export function Aparecer({ children, className }: { children: ReactNode; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const elemento = ref.current;
-    if (!elemento) return;
-    const observador = new IntersectionObserver(
-      ([entrada]) => {
-        if (entrada.isIntersecting) {
-          elemento.dataset.visible = "true";
-          observador.disconnect();
-        }
-      },
-      { rootMargin: "0px 0px -10% 0px" },
-    );
-    observador.observe(elemento);
-    return () => observador.disconnect();
-  }, []);
+  const menosMovimiento = useMenosMovimiento(false);
 
   return (
-    <div ref={ref} data-aparecer className={className}>
+    <motion.div
+      className={className}
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+      transition={menosMovimiento ? { duration: 0 } : { duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+    >
       {children}
-    </div>
+    </motion.div>
   );
 }
