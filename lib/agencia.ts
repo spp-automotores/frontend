@@ -3,6 +3,12 @@
 
 export const agencia = {
   nombre: "SPP Automotores",
+  /**
+   * Dirección del sitio, para armar links completos (el del auto en el mensaje de
+   * WhatsApp y la vista previa al compartir). Al salir al dominio propio pasa a
+   * ser https://sppautomotores.com.
+   */
+  sitio: "https://spp-automotores.vercel.app",
   ciudad: "San Miguel de Tucumán",
   /** Frase de Sebastián para el Inicio. Va tal cual. */
   frase: {

@@ -1,27 +1,27 @@
 import Image from "next/image";
+import Link from "next/link";
 import { BotonWhatsapp } from "@/components/boton-whatsapp";
+import { EstadoDelAuto } from "@/components/estado-del-auto";
 import {
   type Auto,
-  type Estado,
+  direccionDelAuto,
   formatearKm,
-  formatearPrecio,
   nombreDelAuto,
+  textoDelPrecio,
 } from "@/lib/autos";
 import { mensajeDeConsulta } from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
 
-const puntoDeEstado: Record<Estado, string> = {
-  Disponible: "bg-disponible",
-  Reservado: "bg-reservado",
-  Vendido: "bg-highlight",
-};
-
+/**
+ * Toda la tarjeta lleva a la página del auto: el link es el nombre, estirado sobre
+ * la tarjeta con una capa invisible. El botón de WhatsApp queda por encima de esa capa.
+ */
 export function TarjetaAuto({ auto, sizes }: { auto: Auto; sizes: string }) {
   const foto = auto.fotos[0];
   const vendido = auto.estado === "Vendido";
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-2xl bg-card">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-card has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-ring">
       <div className="relative aspect-[4/5] bg-muted">
         {foto && (
           <Image
@@ -32,22 +32,25 @@ export function TarjetaAuto({ auto, sizes }: { auto: Auto; sizes: string }) {
             className={cn("object-cover", vendido && "opacity-50")}
           />
         )}
-        <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-2.5 py-1 text-xs font-semibold">
-          <span aria-hidden="true" className={cn("size-1.5 rounded-full", puntoDeEstado[auto.estado])} />
-          {auto.estado}
-        </span>
+        <EstadoDelAuto estado={auto.estado} className="absolute top-3 left-3" />
       </div>
 
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="text-base leading-snug font-semibold text-pretty">{nombreDelAuto(auto)}</h3>
-        <p className="mt-1 font-heading text-2xl font-extrabold tabular-nums [font-stretch:115%]">
-          {vendido ? (
-            <span className="text-muted-foreground">Vendido</span>
-          ) : auto.precio === null ? (
-            "Consultar"
-          ) : (
-            formatearPrecio(auto.precio)
+        <h3 className="text-base leading-snug font-semibold text-pretty">
+          <Link
+            href={direccionDelAuto(auto)}
+            className="underline-offset-4 outline-none group-hover:underline after:absolute after:inset-0"
+          >
+            {nombreDelAuto(auto)}
+          </Link>
+        </h3>
+        <p
+          className={cn(
+            "mt-1 font-heading text-2xl font-extrabold tabular-nums [font-stretch:115%]",
+            vendido && "text-muted-foreground",
           )}
+        >
+          {textoDelPrecio(auto)}
         </p>
         <p className="mt-2 text-sm text-muted-foreground tabular-nums">
           {[auto.anio, formatearKm(auto.km), auto.combustible, auto.caja].join(" · ")}
@@ -59,7 +62,7 @@ export function TarjetaAuto({ auto, sizes }: { auto: Auto; sizes: string }) {
             <BotonWhatsapp
               mensaje={mensajeDeConsulta(auto)}
               etiqueta="Consultar por WhatsApp"
-              className="w-full"
+              className="relative z-10 w-full"
             />
           )}
         </div>
