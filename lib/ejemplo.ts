@@ -13,6 +13,8 @@ const pexels = (id: number) =>
 export const autosDeEjemplo: Auto[] = [
   {
     id: "ejemplo-toyota-hilux-2022",
+    slug: "ejemplo-toyota-hilux-2022",
+    ejemplo: true,
     marca: "Toyota",
     modelo: "Hilux",
     version: "2.8 SRV 4x4 AT",
@@ -21,26 +23,42 @@ export const autosDeEjemplo: Auto[] = [
     combustible: "Diésel",
     caja: "Automática",
     tipo: "Pickup",
-    color: "Negro",
+    color: "Rojo",
     motor: "2.8",
     puertas: 4,
-    unicoDueno: null,
-    mantenimientos: null,
-    serviceAlDia: null,
+    unicoDueno: true,
+    mantenimientos: "Services oficiales en concesionario Toyota.",
+    serviceAlDia: true,
     precio: 48500000,
     estado: "Disponible",
+    descripcion:
+      "Hilux con caja automática y 4x4, lista para el trabajo y para la ruta. Un solo dueño, services oficiales al día y papeles en regla.",
     ingresadoEl: "2026-10-07",
+    // Ficha completa y varias fotos del mismo auto: así se prueban la galería y la ficha llena.
     fotos: [
       {
-        src: pexels(18240251),
-        alt: "Toyota Hilux negra estacionada, vista de costado",
+        src: pexels(37631701),
+        alt: "Toyota Hilux roja estacionada en un campo verde, vista de costado",
         fuente:
-          "https://www.pexels.com/photo/black-toyota-hilux-pickup-truck-in-the-parking-lot-18240251/",
+          "https://www.pexels.com/photo/red-pickup-truck-in-lush-greenery-at-kochi-37631701/",
+      },
+      {
+        src: pexels(37631702),
+        alt: "Toyota Hilux roja en un campo verde, vista de atrás y de costado",
+        fuente:
+          "https://www.pexels.com/photo/red-pickup-truck-in-lush-green-outdoor-setting-37631702/",
+      },
+      {
+        src: pexels(37631704),
+        alt: "Toyota Hilux roja vista de atrás, frente a una arboleda",
+        fuente: "https://www.pexels.com/photo/red-toyota-pickup-truck-in-open-field-37631704/",
       },
     ],
   },
   {
     id: "ejemplo-jeep-compass-2019",
+    slug: "ejemplo-jeep-compass-2019",
+    ejemplo: true,
     marca: "Jeep",
     modelo: "Compass",
     version: "2.4 Limited AT",
@@ -48,15 +66,17 @@ export const autosDeEjemplo: Auto[] = [
     km: 72000,
     combustible: "Nafta",
     caja: "Automática",
-    tipo: "SUV",
-    color: "Negro",
-    motor: "2.4",
-    puertas: 5,
+    // Casi todo vacío a propósito: la ficha sólo muestra lo que está cargado.
+    tipo: null,
+    color: null,
+    motor: null,
+    puertas: null,
     unicoDueno: null,
     mantenimientos: null,
     serviceAlDia: null,
     precio: null,
     estado: "Disponible",
+    descripcion: null,
     ingresadoEl: "2026-10-05",
     fotos: [
       {
@@ -68,6 +88,8 @@ export const autosDeEjemplo: Auto[] = [
   },
   {
     id: "ejemplo-peugeot-208-2018",
+    slug: "ejemplo-peugeot-208-2018",
+    ejemplo: true,
     marca: "Peugeot",
     modelo: "208",
     version: "1.6 GT",
@@ -84,6 +106,7 @@ export const autosDeEjemplo: Auto[] = [
     serviceAlDia: null,
     precio: 16900000,
     estado: "Reservado",
+    descripcion: "Versión GT con caja manual, ideal para la ciudad.",
     ingresadoEl: "2026-10-02",
     fotos: [
       {
@@ -95,6 +118,8 @@ export const autosDeEjemplo: Auto[] = [
   },
   {
     id: "ejemplo-volkswagen-amarok-2015",
+    slug: "ejemplo-volkswagen-amarok-2015",
+    ejemplo: true,
     marca: "Volkswagen",
     modelo: "Amarok",
     version: "2.0 TDI Highline 4x4",
@@ -111,6 +136,7 @@ export const autosDeEjemplo: Auto[] = [
     serviceAlDia: null,
     precio: 27000000,
     estado: "Vendido",
+    descripcion: null,
     ingresadoEl: "2026-09-28",
     fotos: [
       {
