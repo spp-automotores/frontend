@@ -1,14 +1,7 @@
-import { ArrowLeftRight, FileCheck, Landmark, type LucideIcon, Truck } from "lucide-react";
 import { Aparecer } from "@/components/aparecer";
+import { iconosDeServicio } from "@/components/icono-de-servicio";
 import { TituloDeSeccion } from "@/components/titulo-de-seccion";
-import { type IconoServicio, servicios } from "@/lib/agencia";
-
-const iconos: Record<IconoServicio, LucideIcon> = {
-  financiacion: Landmark,
-  permuta: ArrowLeftRight,
-  tramites: FileCheck,
-  entrega: Truck,
-};
+import { servicios } from "@/lib/agencia";
 
 export function Servicios() {
   return (
@@ -22,7 +15,7 @@ export function Servicios() {
       <Aparecer>
         <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {servicios.map((servicio) => {
-            const Icono = iconos[servicio.icono];
+            const Icono = iconosDeServicio[servicio.icono];
             return (
               <li key={servicio.titulo} className="rounded-2xl bg-card p-5">
                 <Icono aria-hidden="true" className="size-6 text-highlight" strokeWidth={1.75} />

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, Instrument_Serif } from "next/font/google";
+import { agencia } from "@/lib/agencia";
 import "./globals.css";
 
 // Archivo con el eje de ancho (wdth) para los títulos anchos del diseño.
@@ -22,6 +23,8 @@ const descripcion =
 
 // Título y descripción para Google y para la vista previa cuando se comparte el link.
 export const metadata: Metadata = {
+  // Base de los links de la vista previa (por ejemplo, el de cada auto).
+  metadataBase: new URL(agencia.sitio),
   title: "SPP Automotores · Autos en San Miguel de Tucumán",
   description: descripcion,
   openGraph: {
