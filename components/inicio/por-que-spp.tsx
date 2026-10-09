@@ -1,4 +1,4 @@
-import { Aparecer } from "@/components/aparecer";
+import { Aparecer, AparecerItem } from "@/components/aparecer";
 import { TituloDeSeccion } from "@/components/titulo-de-seccion";
 import { porQue } from "@/lib/agencia";
 
@@ -11,13 +11,13 @@ export function PorQueSpp() {
       <Aparecer>
         <TituloDeSeccion id="titulo-por-que">Por qué SPP</TituloDeSeccion>
       </Aparecer>
-      <Aparecer>
+      <Aparecer escalonado>
         <dl className="mt-10 grid gap-8 sm:grid-cols-3 sm:gap-10">
           {porQue.map((item) => (
-            <div key={item.titulo} className="border-t border-border pt-5">
+            <AparecerItem key={item.titulo} className="border-t border-border pt-5">
               <dt className="font-serif text-3xl text-highlight italic">{item.titulo}</dt>
               <dd className="mt-3 text-pretty text-muted-foreground">{item.texto}</dd>
-            </div>
+            </AparecerItem>
           ))}
         </dl>
       </Aparecer>
