@@ -82,8 +82,7 @@ export default async function PaginaDelAuto({ params }: PageProps<"/autos/[slug]
             <Galeria fotos={auto.fotos} apagada={vendido} />
           </div>
 
-          {/* En la computadora, esta columna queda quieta mientras la persona baja. */}
-          <div className="px-4 pt-6 lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start lg:px-0 lg:pt-0">
+          <div className="px-4 pt-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start lg:px-0 lg:pt-0">
             <div className="flex flex-wrap items-center gap-2">
               <EstadoDelAuto estado={auto.estado} className="bg-card" />
               {auto.ejemplo && (
