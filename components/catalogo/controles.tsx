@@ -1,6 +1,7 @@
 import { ArrowUpDown, Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { CerrarPanel } from "@/components/catalogo/cerrar-panel";
 import {
   type Busqueda,
   type FiltroConOpciones,
@@ -10,9 +11,14 @@ import {
 import { cn } from "@/lib/utils";
 
 // Filtros y orden del catálogo, sin JavaScript: cada opción es un link y los
-// paneles son `<details>` del navegador. Al elegir se carga la página nueva, que
-// llega con el panel cerrado (la página le pone una `key` distinta en cada dirección).
-// El mismo `name` hace que abrir un panel cierre el otro.
+// paneles son `<details>` del navegador. El mismo `name` hace que abrir un panel
+// cierre el otro.
+//
+// Al elegir, el panel de filtros del celular queda abierto (para poner varios
+// seguidos) y se cierra con «Ver N autos». Los de una sola elección («Ordenar» y
+// los de la computadora) se cierran solos: llevan una `key` distinta en cada
+// dirección y React los arma de nuevo, cerrados. Sin JavaScript cada opción carga
+// la página entera, que llega con todo cerrado.
 
 const nombreDeLosPaneles = "controles-del-catalogo";
 
@@ -103,10 +109,14 @@ function Orden({ busqueda }: { busqueda: Busqueda }) {
 export function Controles({
   busqueda,
   filtros,
+  cantidad,
 }: {
   busqueda: Busqueda;
   filtros: FiltroConOpciones[];
+  /** Cuántos autos quedan con los filtros puestos. */
+  cantidad: number;
 }) {
+  const direccion = direccionDelCatalogo(busqueda);
   const puestos = filtros.flatMap((filtro) =>
     filtro.opciones.filter((o) => o.elegida).map((o) => ({ clave: filtro.clave, texto: o.texto })),
   );
@@ -120,7 +130,7 @@ export function Controles({
           <Panel
             etiqueta={puestos.length > 0 ? `Filtros (${puestos.length})` : "Filtros"}
             icono={<SlidersHorizontal aria-hidden="true" className="size-4" />}
-            panelClassName="inset-x-0 max-h-[70svh] overflow-y-auto"
+            panelClassName="inset-x-0 max-h-[70svh] overflow-y-auto pb-0"
           >
             <div className="space-y-5">
               {filtros.map((filtro) => (
@@ -134,9 +144,19 @@ export function Controles({
                 </fieldset>
               ))}
             </div>
+            {/* Queda a la vista mientras se recorre el panel. */}
+            <div className="sticky bottom-0 -mx-4 mt-4 border-t border-border bg-card px-4 pt-3 pb-4">
+              <CerrarPanel
+                href={direccion}
+                className="flex min-h-12 w-full items-center justify-center rounded-full bg-foreground text-sm font-semibold text-background transition-transform duration-150 ease-out active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                {cantidad === 0 ? "Cerrar" : `Ver ${cantidad} ${cantidad === 1 ? "auto" : "autos"}`}
+              </CerrarPanel>
+            </div>
           </Panel>
         )}
         <Panel
+          key={`ordenar-${direccion}`}
           etiqueta="Ordenar"
           icono={<ArrowUpDown aria-hidden="true" className="size-4" />}
           panelClassName="inset-x-0"
@@ -146,7 +166,7 @@ export function Controles({
       </div>
 
       {/* Computadora: cada filtro a la vista, en una fila, y el orden a la derecha. */}
-      <div className="hidden flex-wrap items-start gap-2 lg:flex">
+      <div key={direccion} className="hidden flex-wrap items-start gap-2 lg:flex">
         {filtros.map((filtro) => {
           const elegida = filtro.opciones.find((o) => o.elegida);
           return (
@@ -192,7 +212,7 @@ export function Controles({
               href={direccionDelCatalogo({ filtros: {}, orden: busqueda.orden })}
               prefetch={false}
               scroll={false}
-              className="inline-flex min-h-9 items-center px-2 text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
+              className="inline-flex min-h-9 items-center px-2 text-base text-highlight underline underline-offset-4 hover:text-highlight/80"
             >
               Borrar filtros
             </Link>

@@ -7,7 +7,6 @@ import { TarjetaAuto } from "@/components/tarjeta-auto";
 import { agencia } from "@/lib/agencia";
 import { traerAutosALaVista } from "@/lib/autos";
 import {
-  direccionDelCatalogo,
   filtrarYOrdenar,
   filtrosConOpciones,
   leerBusqueda,
@@ -70,8 +69,7 @@ export default async function Catalogo({ searchParams }: PageProps<"/autos">) {
         )}
 
         <div className="mt-6">
-          {/* Una `key` por dirección: al elegir una opción, el panel abierto vuelve cerrado. */}
-          <Controles key={direccionDelCatalogo(busqueda)} busqueda={busqueda} filtros={filtros} />
+          <Controles busqueda={busqueda} filtros={filtros} cantidad={autos.length} />
         </div>
 
         {autos.length > 0 ? (
