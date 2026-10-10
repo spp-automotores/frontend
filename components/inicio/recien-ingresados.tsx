@@ -13,8 +13,8 @@ export function RecienIngresados({ autos }: { autos: Auto[] }) {
       <Aparecer className="px-4 sm:px-6">
         <TituloDeSeccion id="titulo-recien-ingresados">Recién ingresados</TituloDeSeccion>
       </Aparecer>
-      <Aparecer className="mt-8">
-        <ListaDeAutos autos={autos} enColumnas={4} />
+      <Aparecer className="mt-8" escalonado>
+        <ListaDeAutos autos={autos} enColumnas={4} escalonado />
       </Aparecer>
     </section>
   );
