@@ -14,13 +14,21 @@ type Props = {
   etiqueta: string;
   variante?: keyof typeof variantes;
   className?: string;
+  /** Para esconder el texto en pantallas chicas (queda para lectores de pantalla). */
+  etiquetaClassName?: string;
 };
 
 /**
  * Abre WhatsApp con el mensaje armado. Mientras la agencia no tenga el número
  * cargado, el botón se ve apagado, dice «número pendiente» y no abre nada.
  */
-export function BotonWhatsapp({ mensaje, etiqueta, variante = "rojo", className }: Props) {
+export function BotonWhatsapp({
+  mensaje,
+  etiqueta,
+  variante = "rojo",
+  className,
+  etiquetaClassName,
+}: Props) {
   const href = linkDeWhatsapp(mensaje);
   const base = cn(
     "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold",
@@ -32,7 +40,7 @@ export function BotonWhatsapp({ mensaje, etiqueta, variante = "rojo", className 
     return (
       <span aria-disabled="true" className={cn(base, "pointer-events-none opacity-60")}>
         <WhatsappIcon className="size-4 shrink-0" />
-        <span className="flex flex-col items-start leading-tight">
+        <span className={cn("flex flex-col items-start leading-tight", etiquetaClassName)}>
           {etiqueta}
           <span className="text-[11px] font-normal">número pendiente</span>
         </span>
@@ -51,7 +59,7 @@ export function BotonWhatsapp({ mensaje, etiqueta, variante = "rojo", className 
       )}
     >
       <WhatsappIcon className="size-4 shrink-0" />
-      {etiqueta}
+      <span className={etiquetaClassName}>{etiqueta}</span>
     </a>
   );
 }
