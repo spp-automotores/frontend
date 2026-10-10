@@ -27,6 +27,12 @@ export const agencia = {
     tiktok: null as string | null,
   },
   mail: null as string | null,
+  /**
+   * Cuántos días sigue a la vista un auto vendido (marcado «Vendido», al final del
+   * catálogo). Pasado el plazo se oculta solo; su página sigue existiendo.
+   * Provisorio: se ajusta cuando la agencia confirme el plazo.
+   */
+  diasVisibleVendido: 7,
 };
 
 export type IconoServicio = "financiacion" | "permuta" | "tramites" | "entrega";
