@@ -14,7 +14,7 @@ export default function AutoQueNoEsta() {
           Puede que ya no esté publicado o que el link esté incompleto. Mirá los autos que tenemos ahora.
         </p>
         <Link
-          href="/#recien-ingresados"
+          href="/autos"
           className="mt-8 inline-flex min-h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition-transform duration-150 ease-out hover:bg-primary/85 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           Ver los autos
