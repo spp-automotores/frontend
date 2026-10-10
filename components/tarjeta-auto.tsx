@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BotonWhatsapp } from "@/components/boton-whatsapp";
 import { EstadoDelAuto } from "@/components/estado-del-auto";
+import { Corazon } from "@/components/favoritos/corazon";
 import {
   type Auto,
   direccionDelAuto,
@@ -14,7 +15,8 @@ import { cn } from "@/lib/utils";
 
 /**
  * Toda la tarjeta lleva a la página del auto: el link es el nombre, estirado sobre
- * la tarjeta con una capa invisible. El botón de WhatsApp queda por encima de esa capa.
+ * la tarjeta con una capa invisible. El corazón y el botón de WhatsApp quedan por encima
+ * de esa capa.
  */
 export function TarjetaAuto({
   auto,
@@ -43,6 +45,7 @@ export function TarjetaAuto({
           />
         )}
         <EstadoDelAuto estado={auto.estado} className="absolute top-3 left-3" />
+        <Corazon id={auto.id} nombre={nombreDelAuto(auto)} className="absolute top-1 right-1 z-10" />
       </div>
 
       <div className="flex flex-1 flex-col p-4">

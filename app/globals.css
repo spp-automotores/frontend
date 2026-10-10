@@ -100,6 +100,13 @@
   }
 }
 
+/* El corazón de favoritos, al guardar un auto. */
+@keyframes latido {
+  40% {
+    transform: scale(1.25);
+  }
+}
+
 /* Los botones de la portada bajan a secciones de la misma página. */
 @media (prefers-reduced-motion: no-preference) {
   html {
