@@ -6,6 +6,7 @@ import { Galeria } from "@/components/auto/galeria";
 import { BarraSuperior } from "@/components/barra-superior";
 import { BotonWhatsapp } from "@/components/boton-whatsapp";
 import { EstadoDelAuto } from "@/components/estado-del-auto";
+import { Corazon } from "@/components/favoritos/corazon";
 import { iconosDeServicio } from "@/components/icono-de-servicio";
 import { ListaDeAutos } from "@/components/lista-de-autos";
 import { Pie } from "@/components/pie";
@@ -90,6 +91,12 @@ export default async function PaginaDelAuto({ params }: PageProps<"/autos/[slug]
                   Auto de ejemplo
                 </span>
               )}
+              <Corazon
+                id={auto.id}
+                nombre={nombreDelAuto(auto)}
+                className="-my-2 -mr-1.5 ml-auto"
+                circuloClassName="bg-card"
+              />
             </div>
             <h1 className="mt-4 font-heading text-3xl leading-none font-black uppercase tracking-tight text-balance [font-stretch:125%] sm:text-4xl">
               {nombreDelAuto(auto)}
