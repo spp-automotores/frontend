@@ -1,12 +1,20 @@
+import { agencia } from "@/lib/agencia";
 import { autosDeEjemplo } from "@/lib/ejemplo";
+import { diasEntre, fechaDeHoy } from "@/lib/fechas";
 
 // Contrato de un auto: lo usan el Inicio, el catálogo, la página de cada auto
 // y el panel. Lo que todavía no se sabe va como `null`, nunca inventado.
 
 export type Estado = "Disponible" | "Reservado" | "Vendido";
-export type Combustible = "Nafta" | "Diésel";
-export type Caja = "Manual" | "Automática";
-export type Tipo = "SUV" | "Pickup" | "Sedán" | "Hatchback";
+
+// Las listas son también los valores que aceptan los filtros del catálogo.
+export const combustibles = ["Nafta", "Diésel"] as const;
+export const cajas = ["Manual", "Automática"] as const;
+export const tipos = ["SUV", "Pickup", "Sedán", "Hatchback"] as const;
+
+export type Combustible = (typeof combustibles)[number];
+export type Caja = (typeof cajas)[number];
+export type Tipo = (typeof tipos)[number];
 
 export type Foto = {
   src: string;
@@ -43,29 +51,48 @@ export type Auto = {
   fotos: Foto[];
   /** Fecha en que se cargó el auto (AAAA-MM-DD). */
   ingresadoEl: string;
+  /** Fecha en que se marcó vendido (AAAA-MM-DD); `null` mientras no se vendió. */
+  vendidoEl: string | null;
 };
+
+/**
+ * Un auto se muestra en las listas (catálogo, Inicio, «Otros autos») salvo que se
+ * haya vendido hace `diasVisibleVendido` días o más. Un vendido sin fecha no se
+ * muestra: no se puede saber si es reciente. Su página existe igual.
+ */
+export function estaALaVista(auto: Auto, hoy = fechaDeHoy()): boolean {
+  if (auto.estado !== "Vendido") return true;
+  if (!auto.vendidoEl) return false;
+  return diasEntre(auto.vendidoEl, hoy) < agencia.diasVisibleVendido;
+}
 
 // Hoy estas funciones leen los autos de ejemplo; cuando esté la base de datos,
 // cambian sólo ellas.
 
-/** Todos los autos, del más nuevo al más viejo. */
+/** Todos los autos, incluidos los vendidos ocultos, del más nuevo al más viejo. */
 export async function traerAutos(): Promise<Auto[]> {
   return [...autosDeEjemplo].sort((a, b) => b.ingresadoEl.localeCompare(a.ingresadoEl));
 }
 
-/** Los últimos autos cargados, del más nuevo al más viejo. */
-export async function traerRecienIngresados(cantidad = 4): Promise<Auto[]> {
-  return (await traerAutos()).slice(0, cantidad);
+/** Los autos que se muestran en las listas, del más nuevo al más viejo. */
+export async function traerAutosALaVista(): Promise<Auto[]> {
+  const hoy = fechaDeHoy();
+  return (await traerAutos()).filter((auto) => estaALaVista(auto, hoy));
 }
 
-/** El auto de esa dirección, o `null` si no existe. */
+/** Los últimos autos cargados, del más nuevo al más viejo. */
+export async function traerRecienIngresados(cantidad = 4): Promise<Auto[]> {
+  return (await traerAutosALaVista()).slice(0, cantidad);
+}
+
+/** El auto de esa dirección (aunque esté vendido y oculto), o `null` si no existe. */
 export async function traerAuto(slug: string): Promise<Auto | null> {
   return (await traerAutos()).find((auto) => auto.slug === slug) ?? null;
 }
 
 /** Otros autos para mostrar abajo de uno: los más nuevos, sin ese. */
 export async function traerOtrosAutos(slug: string, cantidad = 3): Promise<Auto[]> {
-  return (await traerAutos()).filter((auto) => auto.slug !== slug).slice(0, cantidad);
+  return (await traerAutosALaVista()).filter((auto) => auto.slug !== slug).slice(0, cantidad);
 }
 
 /** Dirección de la página del auto, dentro del sitio. */

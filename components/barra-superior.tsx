@@ -32,14 +32,28 @@ export function BarraSuperior({ enPortada = true }: { enPortada?: boolean }) {
         data-visible={negra}
         className="absolute inset-0 border-b border-border bg-background/90 opacity-0 backdrop-blur-md transition-opacity duration-300 data-[visible=true]:opacity-100"
       />
-      <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+      <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 sm:px-6">
         <Link
           href={enPortada ? "#inicio" : "/"}
           className="font-heading text-sm font-extrabold uppercase tracking-tight [font-stretch:125%] sm:text-base"
         >
           {agencia.nombre}
         </Link>
-        <BotonWhatsapp mensaje={mensajeGeneral} etiqueta="WhatsApp" className="min-h-10 px-3.5" />
+        <nav aria-label="Principal" className="flex shrink-0 items-center gap-1 sm:gap-2">
+          <Link
+            href="/autos"
+            className="inline-flex min-h-10 items-center rounded-full px-2.5 text-sm font-semibold hover:bg-foreground/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:px-3.5"
+          >
+            Autos
+          </Link>
+          {/* En celulares angostos (menos de 400 px) sólo el ícono: si no, la barra no entra. */}
+          <BotonWhatsapp
+            mensaje={mensajeGeneral}
+            etiqueta="WhatsApp"
+            className="min-h-10 min-w-10 px-3 sm:px-3.5"
+            etiquetaClassName="sr-only min-[400px]:not-sr-only"
+          />
+        </nav>
       </div>
     </header>
   );

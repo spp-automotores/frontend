@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { VideoDeFondo } from "@/components/video-de-fondo";
 import { agencia } from "@/lib/agencia";
 
@@ -29,9 +30,9 @@ export function Portada({ video }: Props) {
           </span>
         </h1>
         <div className="mt-8 flex flex-wrap gap-3">
-          <a href="#recien-ingresados" className={`${boton} bg-foreground text-background`}>
+          <Link href="/autos" className={`${boton} bg-foreground text-background`}>
             Ver autos
-          </a>
+          </Link>
           <a
             href="#vende-tu-auto"
             className={`${boton} border border-foreground/30 bg-background/30 text-foreground backdrop-blur-sm`}

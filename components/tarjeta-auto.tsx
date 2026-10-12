@@ -16,7 +16,16 @@ import { cn } from "@/lib/utils";
  * Toda la tarjeta lleva a la página del auto: el link es el nombre, estirado sobre
  * la tarjeta con una capa invisible. El botón de WhatsApp queda por encima de esa capa.
  */
-export function TarjetaAuto({ auto, sizes }: { auto: Auto; sizes: string }) {
+export function TarjetaAuto({
+  auto,
+  sizes,
+  prioridad = false,
+}: {
+  auto: Auto;
+  sizes: string;
+  /** Sólo para la primera tarjeta de una página, si su foto es lo más grande de la pantalla. */
+  prioridad?: boolean;
+}) {
   const foto = auto.fotos[0];
   const vendido = auto.estado === "Vendido";
 
@@ -29,6 +38,7 @@ export function TarjetaAuto({ auto, sizes }: { auto: Auto; sizes: string }) {
             alt={foto.alt}
             fill
             sizes={sizes}
+            preload={prioridad}
             className={cn("object-cover", vendido && "opacity-50")}
           />
         )}
