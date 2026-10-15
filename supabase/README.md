@@ -12,6 +12,24 @@ Cada archivo se corre una sola vez, en el «SQL Editor» del proyecto de Supabas
    (cualquiera lee; nadie escribe todavía).
 2. `seed.sql`: los 10 autos de ejemplo. Se borran todos juntos con
    `delete from public.autos where ejemplo;`
+3. `migrations/20261015120000_solo_el_admin_escribe.sql`: sólo una cuenta de
+   administrador puede cargar, cambiar y borrar autos.
+
+## Cuentas del panel `/admin`
+
+Nadie se puede crear una cuenta desde el sitio (el registro está apagado en
+Authentication). Cada cuenta se crea a mano en Authentication → Users, ya
+confirmada, y después se la marca como administradora con esta línea, en el
+«SQL Editor» (cambiar el email):
+
+```sql
+update auth.users
+set raw_app_meta_data = raw_app_meta_data || '{"rol": "admin"}'::jsonb
+where email = 'email-de-la-cuenta@ejemplo.com';
+```
+
+La marca se nota al volver a entrar. Para sacarla, lo mismo con
+`raw_app_meta_data - 'rol'`.
 
 Los cambios futuros a la base van como archivos nuevos en `migrations/`, con la fecha
 adelante, y se corren en orden.
