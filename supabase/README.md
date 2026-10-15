@@ -14,6 +14,8 @@ Cada archivo se corre una sola vez, en el «SQL Editor» del proyecto de Supabas
    `delete from public.autos where ejemplo;`
 3. `migrations/20261015120000_solo_el_admin_escribe.sql`: sólo una cuenta de
    administrador puede cargar, cambiar y borrar autos.
+4. `migrations/20261015130000_sin_permisos_de_mas.sql`: saca permisos que
+   Supabase deja puestos solos y nadie usa (entre ellos, vaciar la tabla).
 
 ## Cuentas del panel `/admin`
 
@@ -38,4 +40,6 @@ adelante, y se corren en orden.
 
 - **Row Level Security** prendida en toda tabla: sin una regla, nadie lee ni escribe.
 - Las tablas nuevas no quedan a la vista solas: cada una se abre con su `grant`.
+  Y a cada una se le sacan `truncate`, `references` y `trigger` para `anon` y
+  `authenticated`: Supabase los deja puestos solos y `truncate` saltea las reglas.
 - La clave publicable es pública por diseño; lo que protege los datos son las reglas.
