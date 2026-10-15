@@ -5,9 +5,11 @@ import { ListaDeFavoritos } from "@/components/favoritos/lista-de-favoritos";
 import { Pie } from "@/components/pie";
 import { TarjetaAuto } from "@/components/tarjeta-auto";
 import { agencia } from "@/lib/agencia";
-import { traerAutos } from "@/lib/autos";
+import { traerAutos } from "@/lib/traer-autos";
 
 // La página es la misma para todos (se arma una vez): cada navegador muestra sus favoritos.
+// Se rearma sola cada 1 hora (en segundos), con los autos que haya en la base.
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: `Favoritos · ${agencia.nombre}`,

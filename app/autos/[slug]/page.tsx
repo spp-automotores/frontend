@@ -18,16 +18,17 @@ import {
   formatearKm,
   nombreDelAuto,
   textoDelPrecio,
-  traerAuto,
-  traerAutos,
-  traerOtrosAutos,
 } from "@/lib/autos";
 import { fotoAMedida } from "@/lib/foto-a-medida";
+import { traerAuto, traerAutos, traerOtrosAutos } from "@/lib/traer-autos";
 import { cn } from "@/lib/utils";
 import { mensajeDeConsulta } from "@/lib/whatsapp";
 
 // Las páginas de los autos que ya existen se arman al publicar. Un auto cargado
 // después también tiene su página: se arma la primera vez que alguien la visita.
+// Cada página se rearma sola cada 1 hora (en segundos), con lo que haya en la base.
+export const revalidate = 3600;
+
 export async function generateStaticParams() {
   return (await traerAutos()).map((auto) => ({ slug: auto.slug }));
 }
