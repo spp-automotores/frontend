@@ -6,8 +6,12 @@ import { RecienIngresados } from "@/components/inicio/recien-ingresados";
 import { Servicios } from "@/components/inicio/servicios";
 import { VendeTuAuto } from "@/components/inicio/vende-tu-auto";
 import { Pie } from "@/components/pie";
-import { traerRecienIngresados } from "@/lib/autos";
 import { entregasDeEjemplo, videoDeEjemplo } from "@/lib/ejemplo";
+import { traerRecienIngresados } from "@/lib/traer-autos";
+
+// Se rearma sola cada 1 hora (en segundos): así entran los autos nuevos y los
+// vendidos se ocultan al cumplir el plazo, sin volver a publicar.
+export const revalidate = 3600;
 
 export default async function Inicio() {
   const autos = await traerRecienIngresados();

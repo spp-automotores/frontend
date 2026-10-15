@@ -5,7 +5,7 @@ import { Controles } from "@/components/catalogo/controles";
 import { Pie } from "@/components/pie";
 import { TarjetaAuto } from "@/components/tarjeta-auto";
 import { agencia } from "@/lib/agencia";
-import { traerAutosALaVista } from "@/lib/autos";
+import { traerAutosALaVista } from "@/lib/traer-autos";
 import {
   filtrarYOrdenar,
   filtrosConOpciones,
