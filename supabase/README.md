@@ -36,6 +36,15 @@ La marca se nota al volver a entrar. Para sacarla, lo mismo con
 Los cambios futuros a la base van como archivos nuevos en `migrations/`, con la fecha
 adelante, y se corren en orden.
 
+## Probar las reglas
+
+`pruebas/reglas_autos.sql`, en el «SQL Editor»: se hace pasar por el administrador,
+por alguien logueado sin la marca y por alguien sin cuenta, y prueba leer, cargar,
+cambiar y borrar con cada uno. No cambia nada (cada caso se deshace solo) y muestra
+una tabla con lo que pasó al lado de lo esperado. Hace falta que exista al menos una
+cuenta marcada como administradora. Conviene correrla después de cada cambio a las
+reglas.
+
 ## Reglas
 
 - **Row Level Security** prendida en toda tabla: sin una regla, nadie lee ni escribe.
