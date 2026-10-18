@@ -3,7 +3,7 @@
 # SPP Automotores — guía técnica del repo
 
 Sitio de una agencia de autos: parte pública (catálogo, ficha por auto, «Vendé tu auto», nosotros) y un
-panel privado en `/admin` para una sola cuenta de administrador. Un solo repo para todo.
+panel privado en `/admin`, sólo para las cuentas de administrador. Un solo repo para todo.
 
 **El repo es público.** Todo lo que se escribe acá (código, comentarios, commits, issues, PRs) lo puede
 leer cualquiera, incluido el cliente: nada de claves, datos personales ni notas internas.
