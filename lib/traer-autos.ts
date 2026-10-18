@@ -1,4 +1,5 @@
 import "server-only";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   type Auto,
   type Caja,
@@ -75,9 +76,12 @@ function aAuto(fila: FilaAuto): Auto {
  * Todos los autos, incluidos los vendidos ocultos, del más nuevo al más viejo.
  * Si la base no contesta, falla: mejor no publicar que publicar un sitio sin autos
  * (al rearmar una página, queda la versión anterior).
+ *
+ * La administración pasa su propia `conexion` (la de `lib/sesion.ts`), que no guarda
+ * la respuesta: ahí se ve siempre lo último.
  */
-export async function traerAutos(): Promise<Auto[]> {
-  const { data, error } = await supabase
+export async function traerAutos(conexion: SupabaseClient = supabase): Promise<Auto[]> {
+  const { data, error } = await conexion
     .from("autos")
     .select("*")
     .order("ingresado_el", { ascending: false })

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { tieneMarcaDeAdmin } from "@/lib/marca-de-admin";
 import { conexionDelPanel } from "@/lib/sesion";
 
-// Acciones del panel. Cada una es como una dirección pública más (cualquiera puede
+// Acciones de la administración. Cada una es como una dirección pública más (cualquiera puede
 // llamarla): las que cambien datos tienen que llamar a `verificarAdmin()` primero.
 
 export type EstadoEntrar = { error: string | null; email: string };
@@ -33,7 +33,7 @@ export async function entrar(_anterior: EstadoEntrar, formulario: FormData): Pro
 
   if (!tieneMarcaDeAdmin(data.user.app_metadata)) {
     await supabase.auth.signOut({ scope: "local" });
-    return { error: "Esta cuenta no tiene acceso al panel.", email };
+    return { error: "Esta cuenta no tiene acceso a la administración.", email };
   }
 
   redirect("/admin");
