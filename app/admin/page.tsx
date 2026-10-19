@@ -1,33 +1,57 @@
-import { salir } from "@/app/admin/acciones";
-import { Button } from "@/components/ui/button";
-import { agencia } from "@/lib/agencia";
+import { Suspense } from "react";
+import { BarraDeLaAdministracion } from "@/components/admin/barra";
+import { Resumen, ResumenDeRelleno } from "@/components/admin/resumen";
+import { Tareas } from "@/components/admin/tareas";
+import {
+  FilasDeRelleno,
+  ListaDeLaAdministracion,
+  NoSePudieronCargar,
+  TusAutos,
+  ordenarParaLaAdministracion,
+} from "@/components/admin/tus-autos";
+import type { Auto } from "@/lib/autos";
 import { verificarAdmin } from "@/lib/sesion";
+import { traerAutos } from "@/lib/traer-autos";
 
-// El panel. Por ahora sólo muestra con qué cuenta se entró; cargar los autos llega después.
-export default async function Panel() {
-  const { email } = await verificarAdmin();
+// `null`: la base no contestó.
+type AutosDelPanel = Promise<Auto[] | null>;
+
+// El inicio de la administración, «tareas primero»: arriba lo que se viene a hacer,
+// abajo la lista de los autos. La barra y las tareas salen enseguida; el resumen
+// y la lista llegan cuando contesta la base.
+export default async function Administracion() {
+  const { email, supabase } = await verificarAdmin();
+  const autos: AutosDelPanel = traerAutos(supabase).then(ordenarParaLaAdministracion, (error) => {
+    console.error(error);
+    return null;
+  });
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:px-6 sm:py-14">
-      <header className="flex items-start justify-between gap-4 border-b border-border pb-6">
-        <div className="min-w-0">
-          <h1 className="font-heading text-2xl leading-tight font-black uppercase tracking-tight [font-stretch:125%] sm:text-3xl">
-            Panel de {agencia.nombre}
-          </h1>
-          {email && (
-            <p className="mt-2 text-sm text-muted-foreground [overflow-wrap:anywhere]">
-              Entraste como {email}
-            </p>
-          )}
+    <>
+      <BarraDeLaAdministracion email={email} />
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 pt-6 pb-16 sm:px-6 sm:pt-10">
+        <div className="mb-5 min-h-5">
+          <Suspense fallback={<ResumenDeRelleno />}>
+            <ResumenConDatos autos={autos} />
+          </Suspense>
         </div>
-        <form action={salir}>
-          <Button type="submit" variant="outline" className="h-11 rounded-full px-5">
-            Salir
-          </Button>
-        </form>
-      </header>
-
-      <p className="mt-10 text-muted-foreground">Acá vas a cargar los autos.</p>
-    </main>
+        <Tareas />
+        <TusAutos>
+          <Suspense fallback={<FilasDeRelleno />}>
+            <ListaConDatos autos={autos} />
+          </Suspense>
+        </TusAutos>
+      </main>
+    </>
   );
+}
+
+async function ResumenConDatos({ autos }: { autos: AutosDelPanel }) {
+  const lista = await autos;
+  return lista && <Resumen autos={lista} />;
+}
+
+async function ListaConDatos({ autos }: { autos: AutosDelPanel }) {
+  const lista = await autos;
+  return lista ? <ListaDeLaAdministracion autos={lista} /> : <NoSePudieronCargar />;
 }

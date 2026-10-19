@@ -1,7 +1,8 @@
 import type { Estado } from "@/lib/autos";
 import { cn } from "@/lib/utils";
 
-const puntoDeEstado: Record<Estado, string> = {
+/** El color del punto de cada estado (también lo usa la administración). */
+export const puntoDeEstado: Record<Estado, string> = {
   Disponible: "bg-disponible",
   Reservado: "bg-reservado",
   Vendido: "bg-highlight",
