@@ -1,8 +1,10 @@
 "use server";
 
+import { isAuthWeakPasswordError } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
+import { largoMinimoDeContrasena } from "@/lib/contrasena";
 import { tieneMarcaDeAdmin } from "@/lib/marca-de-admin";
-import { conexionDelPanel } from "@/lib/sesion";
+import { conexionDelPanel, verificarAdmin } from "@/lib/sesion";
 
 // Acciones de la administración. Cada una es como una dirección pública más (cualquiera puede
 // llamarla): las que cambien datos tienen que llamar a `verificarAdmin()` primero.
@@ -37,6 +39,61 @@ export async function entrar(_anterior: EstadoEntrar, formulario: FormData): Pro
   }
 
   redirect("/admin");
+}
+
+export type CampoDeLaContrasena = "actual" | "nueva" | "repetir";
+export type EstadoContrasena =
+  | { listo: true }
+  | { listo: false; error: string | null; campo: CampoDeLaContrasena | null };
+
+export async function cambiarContrasena(
+  _anterior: EstadoContrasena,
+  formulario: FormData,
+): Promise<EstadoContrasena> {
+  const { supabase } = await verificarAdmin();
+  const actual = String(formulario.get("actual") ?? "");
+  const nueva = String(formulario.get("nueva") ?? "");
+  const repetir = String(formulario.get("repetir") ?? "");
+  const fallo = (error: string, campo: CampoDeLaContrasena | null = null): EstadoContrasena => ({
+    listo: false,
+    error,
+    campo,
+  });
+
+  if (!actual) return fallo("Escribí tu contraseña actual.", "actual");
+  if (nueva.length < largoMinimoDeContrasena) {
+    return fallo(`La nueva tiene que tener al menos ${largoMinimoDeContrasena} caracteres.`, "nueva");
+  }
+  if (nueva !== repetir) return fallo("Las dos contraseñas nuevas no son iguales.", "repetir");
+  if (nueva === actual) return fallo("La nueva tiene que ser distinta de la actual.", "nueva");
+
+  // Supabase revisa la actual sólo si su configuración lo pide («require current password»);
+  // si no, la ignora. Por eso esa opción tiene que estar prendida en el proyecto.
+  const { error } = await supabase.auth.updateUser({ password: nueva, current_password: actual });
+
+  if (!error) return { listo: true };
+  if (error.code === "current_password_invalid" || error.code === "current_password_required") {
+    return fallo("La contraseña actual no coincide.", "actual");
+  }
+  if (error.code === "same_password") {
+    return fallo("La nueva tiene que ser distinta de la actual.", "nueva");
+  }
+  if (isAuthWeakPasswordError(error)) {
+    if (error.reasons.includes("pwned")) {
+      return fallo("Esa contraseña aparece en filtraciones de internet: elegí otra.", "nueva");
+    }
+    if (error.reasons.includes("characters")) {
+      return fallo("Mezclá minúsculas, mayúsculas, números y símbolos.", "nueva");
+    }
+    return fallo("La contraseña nueva es demasiado corta.", "nueva");
+  }
+  // Supabase puede pedir una sesión reciente (de menos de 24 horas) para cambiarla.
+  if (error.code === "reauthentication_needed") {
+    return fallo("Por seguridad, tocá «Salir», volvé a entrar y probá de nuevo.");
+  }
+  if (error.status === 429) return fallo("Demasiados intentos, esperá unos minutos.");
+  console.error(error);
+  return fallo("No se pudo cambiar. Probá de nuevo en un rato.");
 }
 
 export async function salir() {
