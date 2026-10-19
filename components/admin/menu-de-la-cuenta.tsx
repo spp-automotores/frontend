@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, ChevronDown, CircleUserRound, LogOut } from "lucide-react";
+import { ArrowUpRight, ChevronDown, CircleUserRound, KeyRound, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { salir } from "@/app/admin/acciones";
@@ -9,7 +9,8 @@ const opcion =
   "flex h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors hover:bg-foreground/5 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring [&_svg]:size-4 [&_svg]:text-muted-foreground";
 
 /**
- * El menú de la cuenta: con qué email se entró, «Ver el sitio» y «Salir».
+ * El menú de la cuenta: con qué email se entró, «Ver el sitio», «Cambiar mi contraseña»
+ * y «Salir».
  * Es un `<details>`, así abre y cierra también sin JavaScript; con JavaScript,
  * además se cierra al tocar afuera o con Escape.
  */
@@ -58,6 +59,10 @@ export function MenuDeLaCuenta({ email }: { email: string | null }) {
         <Link href="/" className={opcion}>
           <ArrowUpRight aria-hidden="true" />
           Ver el sitio
+        </Link>
+        <Link href="/admin/contrasena" className={opcion}>
+          <KeyRound aria-hidden="true" />
+          Cambiar mi contraseña
         </Link>
         <form action={salir}>
           <button type="submit" className={opcion}>
