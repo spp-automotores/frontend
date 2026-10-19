@@ -1,13 +1,12 @@
 "use client";
 
-import { CircleAlert, Eye, EyeOff, LoaderCircle } from "lucide-react";
-import { useActionState, useState, useSyncExternalStore } from "react";
+import { CircleAlert, LoaderCircle } from "lucide-react";
+import { useActionState } from "react";
 import { entrar, type EstadoEntrar } from "@/app/admin/acciones";
+import { CampoDeContrasena } from "@/components/admin/campo-de-contrasena";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-const sinSuscripcion = () => () => {};
 
 // El formulario para entrar a la administración. Anda también sin JavaScript: se
 // manda igual y el error vuelve en la página.
@@ -16,9 +15,6 @@ export function FormularioEntrar({ aviso }: { aviso: string | null }) {
     error: aviso,
     email: "",
   });
-  const [verContrasena, setVerContrasena] = useState(false);
-  // El ojito sólo aparece con JavaScript andando: sin él, no haría nada.
-  const conJavascript = useSyncExternalStore(sinSuscripcion, () => true, () => false);
 
   return (
     <form
@@ -43,32 +39,13 @@ export function FormularioEntrar({ aviso }: { aviso: string | null }) {
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="contrasena">Contraseña</Label>
-        <div className="relative">
-          <Input
-            id="contrasena"
-            name="contrasena"
-            type={verContrasena ? "text" : "password"}
-            autoComplete="current-password"
-            required
-            aria-describedby={estado.error ? "error-entrar" : undefined}
-            className="pr-13"
-          />
-          {conJavascript && (
-            <button
-              type="button"
-              onClick={() => setVerContrasena((ver) => !ver)}
-              aria-label={verContrasena ? "Ocultar la contraseña" : "Mostrar la contraseña"}
-              aria-controls="contrasena"
-              className="absolute inset-y-0.5 right-0.5 grid w-11 place-items-center rounded-[10px] text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
-            >
-              {verContrasena ? (
-                <EyeOff aria-hidden="true" className="size-5" />
-              ) : (
-                <Eye aria-hidden="true" className="size-5" />
-              )}
-            </button>
-          )}
-        </div>
+        <CampoDeContrasena
+          id="contrasena"
+          name="contrasena"
+          autoComplete="current-password"
+          required
+          aria-describedby={estado.error ? "error-entrar" : undefined}
+        />
       </div>
 
       {/* Siempre en la página, aunque esté vacío: así el lector de pantalla anuncia el error al
