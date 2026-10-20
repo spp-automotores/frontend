@@ -90,6 +90,24 @@ export async function traerAutos(conexion: SupabaseClient = supabase): Promise<A
   return (data as FilaAuto[]).map(aAuto);
 }
 
+const formaDeId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Si un texto tiene la forma de un `id` de la tabla (la base rechaza cualquier otro). */
+export function esIdDeAuto(texto: string): boolean {
+  return formaDeId.test(texto);
+}
+
+/**
+ * Un auto por su `id`, para «Editar» en la administración (con la `conexion` del panel).
+ * `null` si no existe.
+ */
+export async function traerAutoPorId(conexion: SupabaseClient, id: string): Promise<Auto | null> {
+  if (!esIdDeAuto(id)) return null;
+  const { data, error } = await conexion.from("autos").select("*").eq("id", id).maybeSingle();
+  if (error) throw new Error(`No se pudo traer el auto: ${error.message}`);
+  return data && aAuto(data as FilaAuto);
+}
+
 /** Los autos que se muestran en las listas, del más nuevo al más viejo. */
 export async function traerAutosALaVista(): Promise<Auto[]> {
   const hoy = fechaDeHoy();
