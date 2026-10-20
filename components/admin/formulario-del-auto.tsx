@@ -1,8 +1,17 @@
 "use client";
 
-import { CircleAlert, ImagePlus, LoaderCircle } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronUp, CircleAlert, ImagePlus, Info, LoaderCircle } from "lucide-react";
 import Image from "next/image";
-import { type ComponentProps, type ReactNode, useActionState, useEffect, useRef, useState } from "react";
+import {
+  type ComponentProps,
+  type ReactNode,
+  type RefObject,
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import type { EstadoDelFormularioDelAuto } from "@/app/admin/acciones";
 import { puntoDeEstado } from "@/components/estado-del-auto";
 import { Button } from "@/components/ui/button";
@@ -13,6 +22,7 @@ import { type Foto, cajas, combustibles, estados, tipos } from "@/lib/autos";
 import {
   type CampoDelAuto,
   type ValoresDelAuto,
+  camposObligatorios,
   largoMaximo,
 } from "@/lib/formulario-del-auto";
 import { cn } from "@/lib/utils";
@@ -41,7 +51,30 @@ const etiquetas: Record<CampoDelAuto, string> = {
   serviceAlDia: "Service al día",
   mantenimientos: "Mantenimientos",
   descripcion: "Descripción",
+  tiktok: "Video de TikTok",
 };
+
+const sinSuscripcion = () => () => {};
+
+/**
+ * Lleva la pantalla a un campo y lo deja listo para escribir (en un grupo de opciones, la
+ * elegida o la primera). Con el campo al medio de la pantalla, no queda debajo de la barra.
+ */
+function irAlCampo(campo: CampoDelAuto) {
+  const lugar = document.querySelector<HTMLElement>(`[data-campo="${campo}"]`);
+  if (!lugar) return;
+  const control =
+    lugar.querySelector<HTMLElement>("input:checked") ?? lugar.querySelector<HTMLElement>("input, textarea");
+  const menosMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  lugar.scrollIntoView({ block: "center", behavior: menosMovimiento ? "auto" : "smooth" });
+  control?.focus({ preventScroll: true });
+}
+
+/** Los campos del formulario, en el orden en que aparecen. */
+const camposEnOrden = () =>
+  [...document.querySelectorAll<HTMLElement>("[data-campo]")].map(
+    (lugar) => lugar.dataset.campo as CampoDelAuto,
+  );
 
 const lista = (opciones: readonly string[]) => opciones.map((opcion) => ({ valor: opcion, texto: opcion }));
 const siNoNoSe = [
@@ -72,8 +105,10 @@ export function FormularioDelAuto({
     valores: valoresIniciales,
   });
   const { errores, valores } = estado;
-  const camposConError = Object.keys(errores) as CampoDelAuto[];
+  // En el orden del formulario, no en el de la revisión.
+  const camposConError = (Object.keys(etiquetas) as CampoDelAuto[]).filter((nombre) => errores[nombre]);
   const aviso = useRef<HTMLDivElement>(null);
+  const ultimoCampo = useRef<CampoDelAuto | null>(null);
   const [conCambios, setConCambios] = useState(false);
 
   // Al volver con errores, la caja de arriba toma el foco: el lector de pantalla la lee y
@@ -93,23 +128,52 @@ export function FormularioDelAuto({
   const campo = (nombre: CampoDelAuto) => ({ campo: nombre, valor: valores[nombre] ?? "", error: errores[nombre] });
 
   return (
-    <form action={enviar} noValidate onInput={() => setConCambios(true)} className="flex flex-col gap-4">
-      <div ref={aviso} tabIndex={-1} role="alert" className="scroll-mt-24 outline-none empty:hidden">
+    <form
+      action={enviar}
+      noValidate
+      onInput={() => setConCambios(true)}
+      onFocus={(evento) => {
+        const lugar = (evento.target as HTMLElement).closest<HTMLElement>("[data-campo]");
+        if (lugar) ultimoCampo.current = lugar.dataset.campo as CampoDelAuto;
+      }}
+      className="flex flex-col gap-4"
+    >
+      <FlechasDelFormulario conError={camposConError} ultimoCampo={ultimoCampo} />
+
+      <p className={cn("flex items-center gap-1.5 text-sm text-muted-foreground", lugarDeLasFlechas)}>
+        <MarcaDeObligatorio />
+        Los campos con este círculo son obligatorios.
+      </p>
+
+      <div
+        ref={aviso}
+        tabIndex={-1}
+        role="alert"
+        className={cn("scroll-mt-24 outline-none empty:hidden", lugarDeLasFlechas)}
+      >
         {camposConError.length > 0 && (
           <div className="rounded-xl border border-highlight/40 bg-highlight/10 px-4 py-3.5">
             <p className="flex items-center gap-2 font-semibold">
               <CircleAlert aria-hidden="true" className="size-4 shrink-0 text-highlight" />
               {camposConError.length === 1
-                ? "Hay 1 dato para revisar:"
-                : `Hay ${camposConError.length} datos para revisar:`}
+                ? "Hay 1 dato para revisar. Tocalo para ir:"
+                : `Hay ${camposConError.length} datos para revisar. Tocá cada uno para ir:`}
             </p>
-            <ul className="mt-2 flex flex-col gap-1 pl-6 text-sm">
+            {/* Sin JavaScript son links comunes al campo; con JavaScript, además lo dejan listo para escribir. */}
+            <ul className="mt-3 flex flex-wrap gap-2">
               {camposConError.map((nombre) => (
                 <li key={nombre}>
-                  <a href={`#${nombre}`} className="font-semibold underline underline-offset-4">
+                  <a
+                    href={`#${nombre}`}
+                    onClick={(evento) => {
+                      evento.preventDefault();
+                      irAlCampo(nombre);
+                    }}
+                    className="inline-flex h-11 items-center gap-1 rounded-full border border-highlight/60 bg-background pr-2.5 pl-4 text-sm font-semibold transition-[background-color,transform] duration-150 ease-out hover:bg-highlight/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring active:scale-[0.97]"
+                  >
                     {etiquetas[nombre]}
+                    <ChevronRight aria-hidden="true" className="size-4 text-highlight" />
                   </a>
-                  : {errores[nombre]}
                 </li>
               ))}
             </ul>
@@ -218,6 +282,18 @@ export function FormularioDelAuto({
         />
       </Seccion>
 
+      <Seccion titulo="Video de TikTok">
+        <CampoDeTexto
+          {...campo("tiktok")}
+          etiqueta="Link del video"
+          opcional
+          inputMode="url"
+          maxLength={largoMaximo.tiktok}
+          placeholder="Ej.: https://vm.tiktok.com/…"
+          ayuda="En TikTok: «Compartir» → «Copiar enlace», y pegalo acá. En la página del auto aparece un botón al video."
+        />
+      </Seccion>
+
       {/* En el celular, el botón queda fijo abajo: se guarda sin bajar hasta el final. */}
       <div className="sticky bottom-0 z-30 -mx-4 mt-2 border-t border-border bg-background/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-sm sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
         <Button type="submit" disabled={enviando} className="w-full text-base sm:w-auto sm:min-w-64">
@@ -235,9 +311,89 @@ export function FormularioDelAuto({
   );
 }
 
+/**
+ * Lugar libre a la derecha para las flechas, en pantallas donde no hay margen al costado
+ * del formulario (en una computadora grande quedan afuera, en el margen).
+ */
+const lugarDeLasFlechas = "max-lg:mr-14";
+
+/**
+ * Las dos flechas rojas, fijas a la derecha y al medio de la pantalla: van de campo en campo
+ * sin deslizar, como la tecla Tab. Si hay errores, sólo por los campos con error; si no,
+ * por todos. Sólo con JavaScript (sin él no harían nada).
+ */
+function FlechasDelFormulario({
+  conError,
+  ultimoCampo,
+}: {
+  conError: CampoDelAuto[];
+  ultimoCampo: RefObject<CampoDelAuto | null>;
+}) {
+  const conJavascript = useSyncExternalStore(sinSuscripcion, () => true, () => false);
+  if (!conJavascript) return null;
+
+  const deErrores = conError.length > 0;
+  const mover = (paso: 1 | -1) => {
+    const todos = camposEnOrden();
+    const destinos = deErrores ? todos.filter((nombre) => conError.includes(nombre)) : todos;
+    if (destinos.length === 0) return;
+    const posicion = ultimoCampo.current ? todos.indexOf(ultimoCampo.current) : -1;
+    const lugares = destinos.map((nombre) => todos.indexOf(nombre));
+    const siguiente =
+      paso === 1
+        ? (lugares.find((lugar) => lugar > posicion) ?? lugares[0])
+        : (lugares.findLast((lugar) => lugar < posicion) ?? lugares[lugares.length - 1]);
+    irAlCampo(todos[siguiente]);
+  };
+
+  const boton =
+    "grid size-12 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_8px_24px_-6px_rgb(0_0_0/0.7)] transition-[background-color,transform] duration-150 ease-out hover:bg-primary/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring active:scale-[0.94]";
+
+  return (
+    <div className="fixed top-1/2 right-1.5 z-40 flex -translate-y-1/2 flex-col gap-3 sm:right-3 lg:right-6">
+      {/* `preventDefault` al apoyar el dedo: así el botón no se queda con el foco y el teclado del
+          celular no se cierra y se vuelve a abrir entre campo y campo. */}
+      <button
+        type="button"
+        onPointerDown={(evento) => evento.preventDefault()}
+        onClick={() => mover(-1)}
+        aria-label={deErrores ? "Ir al error anterior" : "Ir al campo anterior"}
+        className={boton}
+      >
+        <ChevronUp aria-hidden="true" className="size-7" strokeWidth={2.5} />
+      </button>
+      <button
+        type="button"
+        onPointerDown={(evento) => evento.preventDefault()}
+        onClick={() => mover(1)}
+        aria-label={deErrores ? "Ir al error siguiente" : "Ir al campo siguiente"}
+        className={boton}
+      >
+        <ChevronDown aria-hidden="true" className="size-7" strokeWidth={2.5} />
+      </button>
+    </div>
+  );
+}
+
+/** El círculo rojo con la «i» de los campos obligatorios. */
+function MarcaDeObligatorio() {
+  return <Info aria-hidden="true" className="size-4 shrink-0 text-highlight" strokeWidth={2.25} />;
+}
+
+function Etiqueta({ campo, children }: { campo: CampoDelAuto; children: ReactNode }) {
+  if (!camposObligatorios.includes(campo)) return children;
+  return (
+    <>
+      {children}
+      <MarcaDeObligatorio />
+      <span className="sr-only">(obligatorio)</span>
+    </>
+  );
+}
+
 function Seccion({ titulo, children }: { titulo: string; children: ReactNode }) {
   return (
-    <section className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+    <section className={cn("rounded-2xl border border-border bg-card p-5 sm:p-6", lugarDeLasFlechas)}>
       <h3 className="text-lg leading-tight font-bold tracking-tight">{titulo}</h3>
       <div className="mt-5 flex flex-col gap-5">{children}</div>
     </section>
@@ -330,9 +486,9 @@ function CampoDeTexto({
   };
 
   return (
-    <div className="flex min-w-0 flex-col gap-2">
+    <div data-campo={campo} className="flex min-w-0 flex-col gap-2">
       <Label htmlFor={campo}>
-        {etiqueta}
+        <Etiqueta campo={campo}>{etiqueta}</Etiqueta>
         {opcional && <span className="font-normal text-muted-foreground">(opcional)</span>}
       </Label>
       {area ? (
@@ -358,8 +514,15 @@ function Opciones({
   ayuda,
 }: PropsDelCampo & { opciones: { valor: string; texto: ReactNode }[]; ayuda?: string }) {
   return (
-    <fieldset id={campo} aria-describedby={descritoPor(campo, ayuda, error)} className="min-w-0 scroll-mt-24">
-      <legend className="text-sm leading-none font-semibold">{etiqueta}</legend>
+    <fieldset
+      id={campo}
+      data-campo={campo}
+      aria-describedby={descritoPor(campo, ayuda, error)}
+      className="min-w-0 scroll-mt-24"
+    >
+      <legend className="flex items-center gap-2 text-sm leading-none font-semibold">
+        <Etiqueta campo={campo}>{etiqueta}</Etiqueta>
+      </legend>
       <div className="mt-2.5 flex flex-wrap gap-2">
         {opciones.map((opcion) => (
           <label

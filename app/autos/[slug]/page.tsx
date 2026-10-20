@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { BarraDeConsulta } from "@/components/auto/barra-de-consulta";
 import { Ficha } from "@/components/auto/ficha";
 import { Galeria } from "@/components/auto/galeria";
+import { VideoEnTiktok } from "@/components/auto/video-en-tiktok";
 import { BarraSuperior } from "@/components/barra-superior";
 import { BotonWhatsapp } from "@/components/boton-whatsapp";
 import { EstadoDelAuto } from "@/components/estado-del-auto";
@@ -122,6 +123,12 @@ export default async function PaginaDelAuto({ params }: PageProps<"/autos/[slug]
                   etiqueta="Consultar por WhatsApp"
                   className="w-full"
                 />
+              </div>
+            )}
+
+            {auto.tiktok && (
+              <div className="mt-4">
+                <VideoEnTiktok link={auto.tiktok} />
               </div>
             )}
 

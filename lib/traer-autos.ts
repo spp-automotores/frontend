@@ -39,6 +39,7 @@ type FilaAuto = {
   precio: number | null;
   estado: Estado;
   descripcion: string | null;
+  tiktok: string | null;
   fotos: Foto[];
   ingresado_el: string;
   vendido_el: string | null;
@@ -66,6 +67,8 @@ function aAuto(fila: FilaAuto): Auto {
     precio: fila.precio,
     estado: fila.estado,
     descripcion: fila.descripcion,
+    // `?? null`: antes de correr la migración de TikTok, la columna no existe.
+    tiktok: fila.tiktok ?? null,
     fotos: fila.fotos,
     ingresadoEl: fila.ingresado_el,
     vendidoEl: fila.vendido_el,

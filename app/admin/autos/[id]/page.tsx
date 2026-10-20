@@ -1,15 +1,16 @@
 import { ArrowUpRight, CircleAlert } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { editarAuto } from "@/app/admin/acciones";
 import { BarraDeLaAdministracion } from "@/components/admin/barra";
 import { FormularioDelAuto } from "@/components/admin/formulario-del-auto";
 import { VolverATusAutos } from "@/components/admin/volver-a-tus-autos";
+import { buttonVariants } from "@/components/ui/button";
 import { agencia } from "@/lib/agencia";
 import { type Auto, direccionDelAuto, nombreDelAuto } from "@/lib/autos";
 import { valoresDeUnAuto } from "@/lib/formulario-del-auto";
 import { verificarAdmin } from "@/lib/sesion";
 import { traerAutoPorId } from "@/lib/traer-autos";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: `Editar un auto · Administración · ${agencia.nombre}`,
@@ -31,23 +32,31 @@ export default async function EditarUnAuto({ params }: PageProps<"/admin/autos/[
     <>
       <BarraDeLaAdministracion email={email} />
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 pt-4 pb-10 sm:px-6 sm:pt-6 sm:pb-16">
-        <VolverATusAutos />
+        <div className="flex items-center justify-between gap-3">
+          <VolverATusAutos />
+          {/* En otra pestaña: así lo escrito en el formulario no se pierde. */}
+          {auto && (
+            <a
+              href={direccionDelAuto(auto)}
+              target="_blank"
+              rel="noopener"
+              className={cn(buttonVariants(), "px-5")}
+            >
+              Ver en el sitio
+              <ArrowUpRight aria-hidden="true" />
+              <span className="sr-only">(se abre en otra pestaña)</span>
+            </a>
+          )}
+        </div>
         {auto ? (
           <>
-            <div className="mt-3 mb-6 flex flex-col gap-2 sm:mt-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
-              <div className="min-w-0">
-                <p className="text-sm text-muted-foreground">Editar</p>
-                <h2 className="mt-1 text-2xl leading-tight font-bold tracking-tight [overflow-wrap:anywhere]">
-                  {nombreDelAuto(auto)} {auto.anio}
-                </h2>
-              </div>
-              <Link
-                href={direccionDelAuto(auto)}
-                className="inline-flex min-h-11 shrink-0 items-center gap-1.5 self-start text-sm text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground sm:self-auto"
-              >
-                Ver en el sitio
-                <ArrowUpRight aria-hidden="true" className="size-4" />
-              </Link>
+            <div className="mt-4 mb-6 sm:mt-6">
+              <h2 className="font-heading text-3xl leading-none font-black uppercase tracking-tight text-foreground [font-stretch:125%] sm:text-4xl">
+                Editar
+              </h2>
+              <p className="mt-3 text-lg leading-snug font-semibold text-foreground/85 [overflow-wrap:anywhere]">
+                {nombreDelAuto(auto)} {auto.anio}
+              </p>
             </div>
             <FormularioDelAuto
               accion={editarAuto.bind(null, auto.id)}
