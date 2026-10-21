@@ -4,6 +4,8 @@ import { ChevronDown, ChevronRight, ChevronUp, CircleAlert, ImagePlus, Info, Loa
 import Image from "next/image";
 import {
   type ComponentProps,
+  type FocusEvent,
+  type FormEvent,
   type ReactNode,
   type RefObject,
   useActionState,
@@ -209,6 +211,7 @@ export function FormularioDelAuto({
             {...campo("km")}
             etiqueta="Km"
             inputMode="numeric"
+            miles
             maxLength={12}
             placeholder="Ej.: 85.000"
             ayuda="0 si es 0 km."
@@ -219,6 +222,7 @@ export function FormularioDelAuto({
           etiqueta="Precio en pesos"
           opcional
           inputMode="numeric"
+          miles
           maxLength={22}
           placeholder="Ej.: 25.000.000"
           ayuda="Vacío: en el sitio dice «Consultar»."
@@ -460,6 +464,51 @@ function Ayuda({ campo, ayuda, error }: { campo: CampoDelAuto; ayuda?: string; e
 const descritoPor = (campo: CampoDelAuto, ayuda?: string, error?: string) =>
   [ayuda && `ayuda-${campo}`, error && `error-${campo}`].filter(Boolean).join(" ") || undefined;
 
+const soloNumeros = (texto: string) => texto.replace(/\D/g, "");
+
+/** 25000000 → 25.000.000 (sin ceros adelante). */
+const conPuntosDeMiles = (texto: string) =>
+  soloNumeros(texto)
+    .replace(/^0+(?=\d)/, "")
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+/**
+ * Pone los puntos de miles mientras se escribe, para no marearse con los ceros. El cursor
+ * queda entre los mismos números, y borrar un punto borra el número de al lado. Sin
+ * JavaScript no hace nada: el servidor acepta el número con o sin puntos.
+ */
+function usePuntosDeMiles() {
+  const anterior = useRef("");
+  return {
+    onFocus: (evento: FocusEvent<HTMLInputElement>) => {
+      anterior.current = evento.currentTarget.value;
+    },
+    onInput: (evento: FormEvent<HTMLInputElement>) => {
+      const input = evento.currentTarget;
+      let texto = input.value;
+      let cursor = input.selectionStart ?? texto.length;
+      const tipo = (evento.nativeEvent as InputEvent).inputType;
+      if (texto !== anterior.current && soloNumeros(texto) === soloNumeros(anterior.current)) {
+        if (tipo === "deleteContentBackward" && cursor > 0) {
+          texto = texto.slice(0, cursor - 1) + texto.slice(cursor);
+          cursor -= 1;
+        } else if (tipo === "deleteContentForward") {
+          texto = texto.slice(0, cursor) + texto.slice(cursor + 1);
+        }
+      }
+      const numerosAntes = soloNumeros(texto.slice(0, cursor)).length;
+      const nuevo = conPuntosDeMiles(texto);
+      input.value = nuevo;
+      let lugar = 0;
+      for (let vistos = 0; lugar < nuevo.length && vistos < numerosAntes; lugar++) {
+        if (nuevo[lugar] !== ".") vistos++;
+      }
+      input.setSelectionRange(lugar, lugar);
+      anterior.current = nuevo;
+    },
+  };
+}
+
 function CampoDeTexto({
   campo,
   valor,
@@ -468,12 +517,16 @@ function CampoDeTexto({
   opcional,
   ayuda,
   area,
+  miles,
   ...resto
 }: PropsDelCampo & {
   opcional?: boolean;
   ayuda?: string;
   area?: boolean;
+  /** Números grandes (km, precio): con puntos de miles mientras se escribe. */
+  miles?: boolean;
 } & Pick<ComponentProps<"input">, "inputMode" | "maxLength" | "placeholder"> & { rows?: number }) {
+  const puntosDeMiles = usePuntosDeMiles();
   const comunes = {
     id: campo,
     name: campo,
@@ -494,7 +547,7 @@ function CampoDeTexto({
       {area ? (
         <Textarea {...comunes} rows={resto.rows ?? 3} />
       ) : (
-        <Input {...comunes} type="text" inputMode={resto.inputMode} />
+        <Input {...comunes} {...(miles ? puntosDeMiles : {})} type="text" inputMode={resto.inputMode} />
       )}
       <Ayuda campo={campo} ayuda={ayuda} error={error} />
     </div>
