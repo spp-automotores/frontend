@@ -1,4 +1,4 @@
-import { ArrowUpRight, CarFront, CircleAlert, EyeOff, RotateCw } from "lucide-react";
+import { ArrowUpRight, CarFront, ChevronRight, CircleAlert, EyeOff, RotateCw } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -48,7 +48,7 @@ export function ListaDeLaAdministracion({ autos }: { autos: Auto[] }) {
   );
 }
 
-/** Toda la fila lleva a la página del auto en el sitio (en el paso 3 pasa a «Editar»). */
+/** Toda la fila lleva a «Editar»; aparte, un link chico a su página en el sitio. */
 function FilaDelAuto({ auto }: { auto: Auto }) {
   const vendido = auto.estado === "Vendido";
 
@@ -59,9 +59,9 @@ function FilaDelAuto({ auto }: { auto: Auto }) {
       <div className="flex min-w-0 flex-1 flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
         <div className="min-w-0 sm:flex-1">
           <h3 className="line-clamp-2 leading-snug font-semibold [overflow-wrap:anywhere]">
-            <Link href={direccionDelAuto(auto)} className="outline-none after:absolute after:inset-0">
+            <Link href={`/admin/autos/${auto.id}`} className="outline-none after:absolute after:inset-0">
+              <span className="sr-only">Editar </span>
               {nombreDelAuto(auto)}
-              <span className="sr-only">, ver en el sitio</span>
             </Link>
           </h3>
           <p className="mt-0.5 text-sm text-muted-foreground tabular-nums">
@@ -78,7 +78,17 @@ function FilaDelAuto({ auto }: { auto: Auto }) {
               {auto.estado}
             </span>
           )}
-          {!estaALaVista(auto) && (
+          {estaALaVista(auto) ? (
+            // Encima del link de toda la fila (`relative z-10`): se puede tocar aparte.
+            <Link
+              href={direccionDelAuto(auto)}
+              className="relative z-10 -my-1 inline-flex min-h-8 items-center gap-1 text-xs text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
+              Ver en el sitio
+              <ArrowUpRight aria-hidden="true" className="size-3.5" />
+              <span className="sr-only">: {nombreDelAuto(auto)}</span>
+            </Link>
+          ) : (
             <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
               <EyeOff aria-hidden="true" className="size-3.5" />
               Oculto en el sitio
@@ -87,7 +97,7 @@ function FilaDelAuto({ auto }: { auto: Auto }) {
         </div>
       </div>
 
-      <ArrowUpRight
+      <ChevronRight
         aria-hidden="true"
         className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground"
       />
@@ -104,7 +114,7 @@ function SelloVendido() {
   );
 }
 
-function Miniatura({ auto }: { auto: Auto }) {
+export function Miniatura({ auto }: { auto: Auto }) {
   const foto = auto.fotos[0];
   const vendido = auto.estado === "Vendido";
 
@@ -134,7 +144,7 @@ function SinAutos() {
       <CarFront aria-hidden="true" className="mx-auto size-8 text-muted-foreground" />
       <p className="mt-3 font-semibold">Todavía no hay autos cargados</p>
       <p className="mt-1 text-sm text-pretty text-muted-foreground">
-        Cuando llegue «Cargar un auto», los vas a ver acá.
+        Tocá «Cargar un auto» para sumar el primero.
       </p>
     </div>
   );
