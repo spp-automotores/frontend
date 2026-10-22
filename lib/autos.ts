@@ -4,7 +4,8 @@ import { diasEntre, fechaDeHoy } from "@/lib/fechas";
 // Contrato de un auto: lo usan el Inicio, el catálogo, la página de cada auto
 // y el panel. Lo que todavía no se sabe va como `null`, nunca inventado.
 
-export type Estado = "Disponible" | "Reservado" | "Vendido";
+export const estados = ["Disponible", "Reservado", "Vendido"] as const;
+export type Estado = (typeof estados)[number];
 
 // Las listas son también los valores que aceptan los filtros del catálogo.
 export const combustibles = ["Nafta", "Diésel"] as const;
@@ -47,6 +48,8 @@ export type Auto = {
   estado: Estado;
   /** Texto de la agencia sobre el auto, con sus palabras. */
   descripcion: string | null;
+  /** Link del video del auto en la cuenta de TikTok de la agencia. */
+  tiktok: string | null;
   fotos: Foto[];
   /** Fecha en que se cargó el auto (AAAA-MM-DD). */
   ingresadoEl: string;
