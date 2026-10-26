@@ -1,12 +1,13 @@
 import { supabaseSinGuardar } from "@/lib/supabase";
 
-// Tarea diaria (ver `vercel.json`): una consulta liviana a la base, para que el plan
-// gratis de Supabase no la pause por falta de uso (la pausa después de 7 días quietos).
-// Vercel la llama una vez por día, sólo en el sitio publicado (rama `main`), y manda
-// la clave CRON_SECRET; sin esa clave, no hace nada.
+// Tarea diaria: una consulta liviana a la base, para que el plan gratis de Supabase
+// no la pause por falta de uso (la pausa después de 7 días quietos).
+// La llama el Worker de Cloudflare una vez por día (`scheduled` en `worker.ts`), con una
+// clave de un solo uso que deja en `globalThis` mientras dura la llamada. Sin esa clave
+// (cualquier pedido de afuera), no hace nada.
 
 export async function GET(request: Request) {
-  const clave = process.env.CRON_SECRET;
+  const clave = globalThis.__claveDeLaTareaDiaria;
   if (!clave || request.headers.get("authorization") !== `Bearer ${clave}`) {
     return new Response("No autorizado", { status: 401 });
   }
@@ -16,4 +17,8 @@ export async function GET(request: Request) {
     return Response.json({ ok: false, error: error.message }, { status: 500 });
   }
   return Response.json({ ok: true });
+}
+
+declare global {
+  var __claveDeLaTareaDiaria: string | undefined;
 }

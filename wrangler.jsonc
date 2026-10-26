@@ -1,0 +1,57 @@
+// Configuración del Worker de Cloudflare donde corre el sitio.
+// Se arma y se publica desde GitHub con Workers Builds (ver README, «Publicar»):
+// la rama de producción con `npm run cf:deploy` y cada otra rama con `npm run cf:preview`,
+// que crea su link de prueba (Preview).
+// Referencia: https://developers.cloudflare.com/workers/wrangler/configuration/
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "spp-automotores",
+  "main": "worker.ts",
+  "compatibility_date": "2026-10-19",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+
+  // Lo que usa OpenNext para guardar páginas (ver `open-next.config.ts`).
+  // Los ids no son claves: sin acceso a la cuenta de Cloudflare no sirven para nada.
+  "kv_namespaces": [{ "binding": "NEXT_INC_CACHE_KV", "id": "PENDIENTE" }],
+  "d1_databases": [
+    {
+      "binding": "NEXT_TAG_CACHE_D1",
+      "database_name": "spp-automotores-etiquetas",
+      "database_id": "PENDIENTE",
+    },
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" }],
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DOQueueHandler"] }],
+  // La cola rehace las páginas pidiéndoselas al mismo Worker.
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "spp-automotores" }],
+
+  // Tarea diaria (`scheduled` en `worker.ts`): 12:00 UTC, 9 de la mañana en Argentina.
+  // Sólo corre en producción.
+  "triggers": { "crons": ["0 12 * * *"] },
+
+  // Los links de prueba no heredan nada de arriba: se repite lo que lee el código.
+  // Comparten KV y D1 con producción sin pisarse (las claves llevan el número de armado);
+  // la cola es propia de cada link. La cola de un link de prueba le pide las páginas a
+  // producción (así funcionan los Service bindings), así que ahí las páginas vencidas
+  // no se rehacen solas: se renuevan al guardar en el panel (`updateTag`).
+  "previews": {
+    "kv_namespaces": [{ "binding": "NEXT_INC_CACHE_KV", "id": "PENDIENTE" }],
+    "d1_databases": [
+      {
+        "binding": "NEXT_TAG_CACHE_D1",
+        "database_name": "spp-automotores-etiquetas",
+        "database_id": "PENDIENTE",
+      },
+    ],
+    "durable_objects": {
+      "bindings": [{ "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" }],
+    },
+    "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "spp-automotores" }],
+  },
+}
