@@ -1,7 +1,7 @@
 # Base de datos (Supabase)
 
 Lo que arma la base del sitio. Nada de acá tiene claves: las claves van en `.env.local`
-(ver `.env.example`) y en las variables de entorno de Vercel.
+(ver `.env.example`) y en las variables de armado de Cloudflare (ver el README del repo, «Publicar»).
 
 ## Cómo se arma, en orden
 

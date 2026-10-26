@@ -18,6 +18,7 @@ leer cualquiera, incluido el cliente: nada de claves, datos personales ni notas 
 | Íconos | `lucide-react`, la única librería de íconos |
 | Panel `/admin` | shadcn/ui (componentes en `components/ui/`, se suman con `npx shadcn add <componente>`) |
 | Datos y login | Supabase (`@supabase/supabase-js` + `@supabase/ssr`) |
+| Hosting | Cloudflare Workers con OpenNext (`wrangler.jsonc`, `open-next.config.ts`, `worker.ts`; ver README, «Publicar») |
 
 Las versiones están fijas en `package.json` (sin `^`, por `.npmrc`). Para subir una, cambiarla a
 propósito y correr `build` y `lint`.
