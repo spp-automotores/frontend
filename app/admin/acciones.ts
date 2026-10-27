@@ -3,7 +3,8 @@
 import { isAuthWeakPasswordError, type SupabaseClient } from "@supabase/supabase-js";
 import { refresh, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
-import { type Auto, type Estado, estados } from "@/lib/autos";
+import { type Auto, type Estado, type Foto, estados } from "@/lib/autos";
+import { type PermisoDeSubida, borrarFotos, hayCloudinary, permisoDeSubida } from "@/lib/cloudinary";
 import { largoMinimoDeContrasena } from "@/lib/contrasena";
 import {
   type ErroresDelAuto,
@@ -15,6 +16,7 @@ import {
   slugLibre,
   valoresDelFormulario,
 } from "@/lib/formulario-del-auto";
+import { fotosQuitadas, leerFotos } from "@/lib/fotos-del-auto";
 import { tieneMarcaDeAdmin } from "@/lib/marca-de-admin";
 import { conexionDelPanel, verificarAdmin } from "@/lib/sesion";
 import { etiquetaAutos } from "@/lib/supabase";
@@ -110,9 +112,23 @@ export async function cambiarContrasena(
   return fallo("No se pudo cambiar. Probá de nuevo en un rato.");
 }
 
+// Fotos: el navegador las sube directo a Cloudinary (una foto del celular pesa más de lo
+// que recibe una acción), con un permiso firmado que da esta acción sólo a un admin.
+
+export type RespuestaDelPermiso = { permiso: PermisoDeSubida } | { error: string };
+
+export async function pedirPermisoDeSubida(): Promise<RespuestaDelPermiso> {
+  await verificarAdmin();
+  if (!hayCloudinary()) {
+    console.error("Faltan las variables de Cloudinary (ver .env.example).");
+    return { error: "Subir fotos no está listo todavía. Avisale a Santiago." };
+  }
+  return { permiso: await permisoDeSubida() };
+}
+
 // «Cargar un auto» y «Editar». Si algo está mal, vuelve lo escrito (no se pierde nada) con
 // el error al lado de cada campo. Si sale bien, a la administración, con el aviso de listo.
-// Hasta el paso de las fotos, un auto se guarda sin fotos (o con las que ya tenía).
+// Las fotos llegan como una lista en el campo `fotos` (ver `lib/fotos-del-auto.ts`).
 //
 // Después de cada cambio, `updateTag` borra lo que el sitio guardaba de la base (hasta 1 hora):
 // la próxima visita lee lo nuevo. Sin esto, la página de un auto recién cargado daría «no
@@ -127,6 +143,10 @@ export type EstadoDelFormularioDelAuto = {
 
 const noSePudoGuardar = "No se pudo guardar. Probá de nuevo en un momento.";
 
+/** «Toyota Hilux SRX 2021»: lo que dice el texto alternativo de cada foto. */
+const nombreParaLasFotos = (datos: { marca: string; modelo: string; version: string | null; anio: number }) =>
+  [datos.marca, datos.modelo, datos.version, datos.anio].filter(Boolean).join(" ");
+
 export async function cargarAuto(
   _anterior: EstadoDelFormularioDelAuto,
   formulario: FormData,
@@ -136,6 +156,8 @@ export async function cargarAuto(
   const lectura = leerFormularioDelAuto(valores);
   if (!lectura.ok) return { errores: lectura.errores, error: null, valores };
   const { datos } = lectura;
+  const fotos = leerFotos(formulario.get("fotos"), [], nombreParaLasFotos(datos));
+  if (!fotos.ok) return { errores: {}, error: fotos.error, valores };
 
   // La dirección se elige libre; si otro auto la toma en el mismo momento, la base
   // la rechaza (es única) y se prueba una vez más con la siguiente.
@@ -151,6 +173,7 @@ export async function cargarAuto(
       .from("autos")
       .insert({
         ...aFilaDeLaBase(datos),
+        fotos: fotos.fotos,
         slug: slugLibre(base, (ocupados as { slug: string }[]).map((fila) => fila.slug)),
         vendido_el: fechaDeVenta(datos.estado, null),
       })
@@ -169,12 +192,21 @@ export async function cargarAuto(
   return { errores: {}, error: noSePudoGuardar, valores };
 }
 
-type EstadoAnterior = Pick<Auto, "estado" | "vendidoEl">;
+type EstadoAnterior = Pick<Auto, "estado" | "vendidoEl" | "fotos">;
 
-/** El estado que tiene el auto ahora en la base: hace falta para saber su fecha de venta. */
+/**
+ * Cómo está el auto ahora en la base: hace falta para saber su fecha de venta y qué fotos
+ * tenía (las que se quitan, se borran de Cloudinary).
+ */
 async function estadoAnterior(supabase: SupabaseClient, id: string): Promise<EstadoAnterior | null> {
-  const { data } = await supabase.from("autos").select("estado, vendido_el").eq("id", id).maybeSingle();
-  return data && { estado: data.estado as Estado, vendidoEl: data.vendido_el as string | null };
+  const { data } = await supabase.from("autos").select("estado, vendido_el, fotos").eq("id", id).maybeSingle();
+  return (
+    data && {
+      estado: data.estado as Estado,
+      vendidoEl: data.vendido_el as string | null,
+      fotos: data.fotos as Foto[],
+    }
+  );
 }
 
 const yaNoEsta = "Este auto ya no está en la lista. Volvé a la administración.";
@@ -193,11 +225,13 @@ export async function editarAuto(
   if (!esIdDeAuto(id)) return { errores: {}, error: yaNoEsta, valores };
   const anterior = await estadoAnterior(supabase, id);
   if (!anterior) return { errores: {}, error: yaNoEsta, valores };
+  const fotos = leerFotos(formulario.get("fotos"), anterior.fotos, nombreParaLasFotos(datos));
+  if (!fotos.ok) return { errores: {}, error: fotos.error, valores };
 
   // La dirección (`slug`) no se toca: los links que ya se compartieron siguen andando.
   const { data, error } = await supabase
     .from("autos")
-    .update({ ...aFilaDeLaBase(datos), vendido_el: fechaDeVenta(datos.estado, anterior) })
+    .update({ ...aFilaDeLaBase(datos), fotos: fotos.fotos, vendido_el: fechaDeVenta(datos.estado, anterior) })
     .eq("id", id)
     .select("id");
 
@@ -207,6 +241,7 @@ export async function editarAuto(
   }
   if (data.length === 0) return { errores: {}, error: yaNoEsta, valores };
   updateTag(etiquetaAutos);
+  await borrarFotos(fotosQuitadas(anterior.fotos, fotos.fotos));
   redirect(`/admin?editado=${id}`);
 }
 

@@ -21,6 +21,8 @@ export type Foto = {
   alt: string;
   /** Página de origen de la foto, cuando no es propia (por ejemplo, Pexels). */
   fuente?: string;
+  /** Las fotos subidas desde el panel: su nombre en Cloudinary, para poder borrarla. */
+  idCloudinary?: string;
 };
 
 export type Auto = {
