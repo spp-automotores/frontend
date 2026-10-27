@@ -12,10 +12,13 @@ const pexels = (id: number) =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg`;
 
 export const videoDeEjemplo = {
-  src: "https://videos.pexels.com/video-files/32013220/13644515_960_540_30fps.mp4",
+  src: "https://videos.pexels.com/video-files/17530623/17530623-sd_960_540_30fps.mp4",
   /** Cuadro fijo: se ve mientras carga el video y en lugar del video con «reducir movimiento». */
-  poster: "https://images.pexels.com/videos/32013220/black-suv-offroading-32013220.jpeg",
-  fuente: "https://www.pexels.com/video/black-suv-offroading-on-dusty-rural-road-32013220/",
+  poster:
+    "https://images.pexels.com/videos/17530623/4x4-adventure-dust-road-outdoor-adventure-17530623.jpeg",
+  fuente: "https://www.pexels.com/video/a-white-pickup-truck-driving-on-a-rocky-road-17530623/",
+  /** La cámara sigue a la camioneta, que va un poco a la izquierda del centro: el recorte del celular la sigue. */
+  encuadre: "45% 50%",
 };
 
 export const entregasDeEjemplo: Foto[] = [

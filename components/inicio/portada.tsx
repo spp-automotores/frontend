@@ -2,7 +2,7 @@ import Link from "next/link";
 import { VideoDeFondo } from "@/components/video-de-fondo";
 import { agencia } from "@/lib/agencia";
 
-type Props = { video: { src: string; poster: string } };
+type Props = { video: { src: string; poster: string; encuadre: string } };
 
 const boton =
   "inline-flex min-h-12 items-center justify-center rounded-full px-6 text-sm font-semibold transition-transform duration-150 ease-out active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
@@ -10,7 +10,7 @@ const boton =
 export function Portada({ video }: Props) {
   return (
     <section id="inicio" className="relative isolate flex min-h-svh flex-col overflow-hidden">
-      <VideoDeFondo src={video.src} poster={video.poster} />
+      <VideoDeFondo src={video.src} poster={video.poster} encuadre={video.encuadre} />
       {/* Oscurece el video para que el texto se lea siempre. */}
       <div
         aria-hidden="true"
