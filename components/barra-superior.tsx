@@ -4,6 +4,7 @@ import { Heart } from "lucide-react";
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import { BotonWhatsapp } from "@/components/boton-whatsapp";
+import { LogoSpp } from "@/components/icons/logo-spp";
 import { agencia } from "@/lib/agencia";
 import { useFavoritos } from "@/lib/favoritos";
 import { mensajeGeneral } from "@/lib/whatsapp";
@@ -38,8 +39,10 @@ export function BarraSuperior({ enPortada = true }: { enPortada?: boolean }) {
       <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 sm:px-6">
         <Link
           href={enPortada ? "#inicio" : "/"}
-          className="font-heading text-sm font-extrabold uppercase tracking-tight [font-stretch:125%] sm:text-base"
+          className="flex items-center gap-2 font-heading text-sm font-extrabold uppercase tracking-tight [font-stretch:125%] sm:text-base"
         >
+          {/* La silueta sólo desde 640 px: en el celular el nombre se partía en dos líneas. */}
+          <LogoSpp className="hidden h-4 w-auto shrink-0 sm:block" />
           {agencia.nombre}
         </Link>
         {/* Debajo de 400 px los botones van pegados: si no, el nombre se parte en dos líneas. */}
