@@ -1,7 +1,6 @@
 "use client";
 
-import { ChevronDown, ChevronRight, ChevronUp, CircleAlert, ImagePlus, Info, LoaderCircle } from "lucide-react";
-import Image from "next/image";
+import { ChevronDown, ChevronRight, ChevronUp, CircleAlert, Info, LoaderCircle } from "lucide-react";
 import {
   type ComponentProps,
   type FocusEvent,
@@ -15,6 +14,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import type { EstadoDelFormularioDelAuto } from "@/app/admin/acciones";
+import { FotosDelAuto } from "@/components/admin/fotos-del-auto";
 import { puntoDeEstado } from "@/components/estado-del-auto";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -98,7 +98,7 @@ export function FormularioDelAuto({
 }: {
   accion: AccionDelAuto;
   valoresIniciales: ValoresDelAuto;
-  /** Las que ya tiene el auto (las de ejemplo, por ahora): se muestran, todavía no se cambian. */
+  /** Las que ya tiene el auto. */
   fotos: Foto[];
 }) {
   const [estado, enviar, enviando] = useActionState(accion, {
@@ -112,6 +112,7 @@ export function FormularioDelAuto({
   const aviso = useRef<HTMLDivElement>(null);
   const ultimoCampo = useRef<CampoDelAuto | null>(null);
   const [conCambios, setConCambios] = useState(false);
+  const [fotosSubiendo, setFotosSubiendo] = useState(false);
 
   // Al volver con errores, la caja de arriba toma el foco: el lector de pantalla la lee y
   // en el celular la pantalla sube hasta ella.
@@ -190,7 +191,7 @@ export function FormularioDelAuto({
       </div>
 
       <Seccion titulo="Fotos">
-        <FotosDelAuto fotos={fotos} />
+        <FotosDelAuto fotosIniciales={fotos} alCambiar={() => setConCambios(true)} alSubir={setFotosSubiendo} />
       </Seccion>
 
       <Seccion titulo="Lo principal">
@@ -300,11 +301,16 @@ export function FormularioDelAuto({
 
       {/* En el celular, el botón queda fijo abajo: se guarda sin bajar hasta el final. */}
       <div className="sticky bottom-0 z-30 -mx-4 mt-2 border-t border-border bg-background/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-sm sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
-        <Button type="submit" disabled={enviando} className="w-full text-base sm:w-auto sm:min-w-64">
+        <Button type="submit" disabled={enviando || fotosSubiendo} className="w-full text-base sm:w-auto sm:min-w-64">
           {enviando ? (
             <>
               <LoaderCircle aria-hidden="true" className="size-5 motion-safe:animate-spin" />
               Guardando…
+            </>
+          ) : fotosSubiendo ? (
+            <>
+              <LoaderCircle aria-hidden="true" className="size-5 motion-safe:animate-spin" />
+              Subiendo fotos…
             </>
           ) : (
             "Guardar el auto"
@@ -401,43 +407,6 @@ function Seccion({ titulo, children }: { titulo: string; children: ReactNode }) 
       <h3 className="text-lg leading-tight font-bold tracking-tight">{titulo}</h3>
       <div className="mt-5 flex flex-col gap-5">{children}</div>
     </section>
-  );
-}
-
-/** Hasta que llegue la subida de fotos, se ven las que ya tiene el auto, sin poder cambiarlas. */
-function FotosDelAuto({ fotos }: { fotos: Foto[] }) {
-  if (fotos.length === 0) {
-    return (
-      <div className="flex items-start gap-3 rounded-xl border border-dashed border-foreground/20 px-4 py-4">
-        <ImagePlus aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
-        <div className="text-sm">
-          <p className="font-semibold">Subir fotos llega en el próximo paso.</p>
-          <p className="mt-1 text-pretty text-muted-foreground">
-            Mientras tanto, el auto se guarda y sale en el sitio sin foto.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <ul className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
-        {fotos.map((foto, i) => (
-          <li key={foto.src} className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-muted">
-            <Image src={foto.src} alt={foto.alt} fill sizes="80px" className="object-cover" />
-            {i === 0 && (
-              <span className="absolute inset-x-0 bottom-0 bg-background/85 py-0.5 text-center text-[11px] font-semibold">
-                Portada
-              </span>
-            )}
-          </li>
-        ))}
-      </ul>
-      <p className="mt-3 text-sm text-pretty text-muted-foreground">
-        Cambiar las fotos llega en el próximo paso. Al guardar, quedan como están.
-      </p>
-    </div>
   );
 }
 
