@@ -8,7 +8,7 @@ export const agencia = {
    * WhatsApp y la vista previa al compartir). Al salir al dominio propio pasa a
    * ser https://sppautomotores.com.
    */
-  sitio: "https://spp-automotores.vercel.app",
+  sitio: "https://spp-automotores.brizuelasantiago433.workers.dev",
   ciudad: "San Miguel de Tucumán",
   /** Frase de Sebastián para el Inicio. Va tal cual. */
   frase: {
@@ -16,7 +16,7 @@ export const agencia = {
     final: "con seguridad, transparencia y facilidad.",
   },
   /** Sólo dígitos, con código de país y de área (54 9 381…). Mientras sea `null`, los botones no abren nada. */
-  whatsapp: null as string | null,
+  whatsapp: "5493815308224" as string | null,
   direccion: null as string | null,
   horarios: null as string | null,
   /** Año en que empezó la agencia; se muestra cuando esté confirmado. */

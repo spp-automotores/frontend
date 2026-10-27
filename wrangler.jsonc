@@ -37,6 +37,16 @@
   // Sólo corre en producción.
   "triggers": { "crons": ["0 12 * * *"] },
 
+  // Registro de cada visita (Observability → Logs, con su CPU), gratis dentro del plan.
+  // Va escrito acá porque cada publicación aplica este archivo: sin el bloque, se apaga.
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": { "enabled": true, "head_sampling_rate": 1, "invocation_logs": true, "persist": true },
+    "traces": { "enabled": false },
+    "issues": { "enabled": false },
+  },
+
   // Los links de prueba no heredan nada de arriba: se repite lo que lee el código.
   // Comparten KV y D1 con producción sin pisarse (las claves llevan el número de armado);
   // la cola es propia de cada link. La cola de un link de prueba le pide las páginas a
