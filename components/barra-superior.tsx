@@ -41,9 +41,13 @@ export function BarraSuperior({ enPortada = true }: { enPortada?: boolean }) {
           href={enPortada ? "#inicio" : "/"}
           className="flex items-center gap-2 font-heading text-sm font-extrabold uppercase tracking-tight [font-stretch:125%] sm:text-base"
         >
-          {/* La silueta sólo desde 640 px: en el celular el nombre se partía en dos líneas. */}
-          <LogoSpp className="hidden h-4 w-auto shrink-0 sm:block" />
-          {agencia.nombre}
+          {/* En el celular, silueta + «SPP»: con el nombre entero se partía en dos líneas.
+              El nombre entero sigue para los lectores de pantalla. */}
+          <LogoSpp className="h-4 w-auto shrink-0" />
+          <span aria-hidden="true" className="sm:hidden">
+            {agencia.nombreCorto}
+          </span>
+          <span className="sr-only sm:not-sr-only">{agencia.nombre}</span>
         </Link>
         {/* Debajo de 400 px los botones van pegados: si no, el nombre se parte en dos líneas. */}
         <nav
