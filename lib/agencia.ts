@@ -3,6 +3,8 @@
 
 export const agencia = {
   nombre: "SPP Automotores",
+  /** Lo que dice la barra de arriba en el celular, al lado de la silueta. */
+  nombreCorto: "SPP",
   /**
    * Dirección del sitio, para armar links completos (el del auto en el mensaje de
    * WhatsApp y la vista previa al compartir).
