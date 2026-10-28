@@ -33,7 +33,7 @@ export type PermisoDeSubida = {
   campos: Record<string, string>;
 };
 
-/** El permiso para subir una foto, con su nombre ya elegido acá (`autos/<id al azar>`). */
+/** El permiso para subir una foto, con su nombre ya elegido acá (`<carpeta>/<id al azar>`). */
 export async function permisoDeSubida(): Promise<PermisoDeSubida> {
   const datos = {
     public_id: `${carpetaDeFotos}/${crypto.randomUUID()}`,
