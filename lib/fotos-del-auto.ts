@@ -14,8 +14,16 @@ export const carpetaDeFotos = "autos";
 /** Cuántas fotos puede tener un auto. */
 export const maximoDeFotos = 30;
 
-/** Las fotos se achican en el celular antes de subir, a este lado mayor (en píxeles). */
-export const ladoMayorAlSubir = 2000;
+/**
+ * Las fotos suben tal cual salen de la cámara, para no perder calidad. Sólo se achican en el
+ * celular antes de subir si pasan lo que acepta Cloudinary en su plan gratis (10 MB y 25
+ * megapíxeles por foto, medido el 31-10-2026) o si no son JPG, PNG o WebP.
+ */
+export const limitesParaSubirTalCual = { bytes: 9_500_000, pixeles: 25_000_000 } as const;
+
+/** Si hay que achicarla, a este lado mayor (en píxeles) y en JPG de esta calidad. */
+export const ladoMayorAlAchicar = 4000;
+export const calidadAlAchicar = 0.92;
 
 /** Lo que manda el formulario por cada foto. */
 export type FotoDelFormulario = { src: string; idCloudinary?: string };

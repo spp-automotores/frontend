@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Instrument_Serif } from "next/font/google";
+import { Archivo, Montserrat } from "next/font/google";
 import { agencia } from "@/lib/agencia";
 import "./globals.css";
 
@@ -10,12 +10,12 @@ const archivo = Archivo({
   axes: ["wdth"],
 });
 
-// Instrument Serif sólo en cursiva: es para frases de acento, no para texto corrido.
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
+// Montserrat: las frases de acento en rojo y el logo grande de la portada. Derecha y
+// firme, parecida a las letras del logo de la agencia.
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
-  weight: "400",
-  style: "italic",
+  weight: ["500", "700"],
 });
 
 const descripcion =
@@ -46,7 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es-AR"
-      className={`${archivo.variable} ${instrumentSerif.variable} h-full antialiased`}
+      className={`${archivo.variable} ${montserrat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
