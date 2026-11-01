@@ -8,8 +8,11 @@ import type { Foto } from "@/lib/autos";
 /** El nombre de la cuenta de Cloudinary (no es secreto: va en cada link de foto). */
 export const cuentaDeCloudinary = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? null;
 
-/** La carpeta de Cloudinary donde van todas las fotos de los autos. */
-export const carpetaDeFotos = "autos";
+/**
+ * La carpeta de Cloudinary donde van las fotos de los autos: `autos` en producción y
+ * `autos-pruebas` en todo lo demás (ver `next.config.ts`). Así una prueba nunca borra una foto real.
+ */
+export const carpetaDeFotos = process.env.CARPETA_DE_FOTOS ?? "autos-pruebas";
 
 /** Cuántas fotos puede tener un auto. */
 export const maximoDeFotos = 30;
