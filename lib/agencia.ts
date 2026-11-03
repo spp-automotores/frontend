@@ -5,6 +5,8 @@ export const agencia = {
   nombre: "SPP Automotores",
   /** Lo que dice la barra de arriba en el celular, al lado de la silueta. */
   nombreCorto: "SPP",
+  /** Las dos líneas del logo de la agencia, como en el original (la portada lo muestra grande). */
+  nombreDelLogo: { arriba: "Sebastián Paz Posse", abajo: "Automotores" },
   /**
    * Dirección del sitio, para armar links completos (el del auto en el mensaje de
    * WhatsApp y la vista previa al compartir).
@@ -25,7 +27,6 @@ export const agencia = {
   redes: {
     instagram: null as string | null,
     facebook: null as string | null,
-    tiktok: null as string | null,
   },
   mail: null as string | null,
   /**

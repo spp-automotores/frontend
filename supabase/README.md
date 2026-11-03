@@ -16,6 +16,9 @@ Cada archivo se corre una sola vez, en el «SQL Editor» del proyecto de Supabas
    administrador puede cargar, cambiar y borrar autos.
 4. `migrations/20261015130000_sin_permisos_de_mas.sql`: saca permisos que
    Supabase deja puestos solos y nadie usa (entre ellos, vaciar la tabla).
+5. `migrations/20261020000000_tiktok_del_auto.sql`: el link al video de cada auto.
+6. `migrations/20261031000000_instagram_en_lugar_de_tiktok.sql`: ese link pasa de
+   TikTok a Instagram.
 
 ## Cuentas del panel `/admin`
 

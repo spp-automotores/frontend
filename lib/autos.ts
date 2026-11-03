@@ -50,8 +50,8 @@ export type Auto = {
   estado: Estado;
   /** Texto de la agencia sobre el auto, con sus palabras. */
   descripcion: string | null;
-  /** Link del video del auto en la cuenta de TikTok de la agencia. */
-  tiktok: string | null;
+  /** Link del video del auto en la cuenta de Instagram de la agencia. */
+  instagram: string | null;
   fotos: Foto[];
   /** Fecha en que se cargó el auto (AAAA-MM-DD). */
   ingresadoEl: string;

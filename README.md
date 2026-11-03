@@ -36,6 +36,13 @@ adaptador de Next.js. Lo arma y lo publica Cloudflare desde GitHub (Workers Buil
 
 - Las dos variables `NEXT_PUBLIC_` de `.env.example` se cargan en Cloudflare como **variables de
   armado** (Build variables): Next.js las pega en el código al armar.
+- **Dos bases de datos.** `main` (el sitio real) usa la base de producción; cualquier otra rama
+  (`staging` y los links de prueba) usa la de pruebas, con autos de ejemplo. Lo decide
+  `next.config.ts` con la rama que avisa Cloudflare (`WORKERS_CI_BRANCH`). Por eso las variables de
+  armado son cuatro: las dos `NEXT_PUBLIC_SUPABASE_*` (producción) y las dos `SUPABASE_PRUEBAS_*`.
+  Si una rama que no es `main` no encuentra las de pruebas, el armado se corta. Las fotos también se
+  separan: carpeta `autos` en producción y `autos-pruebas` en lo demás. Fuera de producción, el panel
+  muestra un cartel «Pruebas».
 - La configuración del Worker está en `wrangler.jsonc`; cómo guarda las páginas, en
   `open-next.config.ts`; lo que se suma al Worker (la tarea diaria y el `noindex` de los links
   `*.workers.dev`), en `worker.ts`.

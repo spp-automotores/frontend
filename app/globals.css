@@ -7,8 +7,9 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-archivo);
   --font-heading: var(--font-archivo);
-  --font-serif: var(--font-instrument-serif);
+  --font-acento: var(--font-montserrat);
   --color-highlight: var(--highlight);
+  --color-acento: var(--acento);
   --color-disponible: var(--disponible);
   --color-reservado: var(--reservado);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -57,8 +58,8 @@
   --card-foreground: #f4f1ec;
   --popover: #161616;
   --popover-foreground: #f4f1ec;
-  /* Rojo SPP: fondo de botones, siempre con texto blanco. */
-  --primary: #a83034;
+  /* Rojo SPP: fondo de botones, siempre con texto blanco (5,6:1). */
+  --primary: #d0101a;
   --primary-foreground: #ffffff;
   --secondary: #161616;
   --secondary-foreground: #f4f1ec;
@@ -66,24 +67,26 @@
   --muted-foreground: #a39e97;
   --accent: #161616;
   --accent-foreground: #f4f1ec;
-  --destructive: #e24a50;
-  /* Rojo claro: texto rojo sobre negro (el rojo SPP no se lee como texto). */
-  --highlight: #e24a50;
+  --destructive: #ff4a50;
+  /* Rojo claro: texto rojo chico sobre negro (5,9:1; el rojo SPP no se lee como texto chico). */
+  --highlight: #ff4a50;
+  /* Rojo fuerte: sólo texto grande (24 px o más, o 19 px en negrita) y la línea del logo (4,2:1). */
+  --acento: #e8141c;
   /* Puntos de estado de cada auto (Disponible, Reservado); Vendido usa el rojo claro. */
   --disponible: #5bbf7a;
   --reservado: #e0a84a;
   --border: rgb(244 241 236 / 12%);
   --input: rgb(244 241 236 / 16%);
-  --ring: #e24a50;
+  --ring: #ff4a50;
   --radius: 0.625rem;
   --sidebar: #161616;
   --sidebar-foreground: #f4f1ec;
-  --sidebar-primary: #a83034;
+  --sidebar-primary: #d0101a;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #0c0c0c;
   --sidebar-accent-foreground: #f4f1ec;
   --sidebar-border: rgb(244 241 236 / 12%);
-  --sidebar-ring: #e24a50;
+  --sidebar-ring: #ff4a50;
   color-scheme: dark;
 }
 
@@ -97,6 +100,12 @@
   html {
     @apply font-sans;
     -webkit-tap-highlight-color: transparent;
+  }
+  /* Nada más ancho que la pantalla mueve la página de costado (en el iPhone se notaba).
+     `clip` y no `hidden`: no rompe las barras fijas (`sticky`). */
+  html,
+  body {
+    overflow-x: clip;
   }
 }
 

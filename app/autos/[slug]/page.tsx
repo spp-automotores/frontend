@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { BarraDeConsulta } from "@/components/auto/barra-de-consulta";
 import { Ficha } from "@/components/auto/ficha";
 import { Galeria } from "@/components/auto/galeria";
-import { VideoEnTiktok } from "@/components/auto/video-en-tiktok";
+import { VideoEnInstagram } from "@/components/auto/video-en-instagram";
 import { BarraSuperior } from "@/components/barra-superior";
 import { BotonWhatsapp } from "@/components/boton-whatsapp";
 import { EstadoDelAuto } from "@/components/estado-del-auto";
@@ -126,9 +126,9 @@ export default async function PaginaDelAuto({ params }: PageProps<"/autos/[slug]
               </div>
             )}
 
-            {auto.tiktok && (
+            {auto.instagram && (
               <div className="mt-4">
-                <VideoEnTiktok link={auto.tiktok} />
+                <VideoEnInstagram link={auto.instagram} />
               </div>
             )}
 
