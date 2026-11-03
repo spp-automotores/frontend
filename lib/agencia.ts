@@ -20,12 +20,17 @@ export const agencia = {
   },
   /** Sólo dígitos, con código de país y de área (54 9 381…). Mientras sea `null`, los botones no abren nada. */
   whatsapp: "5493815308224" as string | null,
-  direccion: null as string | null,
+  /** Calle y número; la ciudad va aparte (`ciudad`). Igual que en el perfil de Google Maps de la agencia. */
+  direccion: "Combate de San Lorenzo 1681" as string | null,
+  codigoPostal: "T4000CBK",
+  provincia: "Tucumán",
+  /** Dónde está el local, como lo marca Google Maps (para los datos que lee Google). */
+  ubicacion: { latitud: -26.8297575, longitud: -65.2234531 },
   horarios: null as string | null,
   /** Año en que empezó la agencia; se muestra cuando esté confirmado. */
   fundacion: null as number | null,
   redes: {
-    instagram: null as string | null,
+    instagram: "https://www.instagram.com/spp_automotores/" as string | null,
     facebook: null as string | null,
   },
   mail: null as string | null,

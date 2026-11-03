@@ -1,4 +1,5 @@
 import { BarraSuperior } from "@/components/barra-superior";
+import { DatosParaGoogle } from "@/components/datos-para-google";
 import { Entregas } from "@/components/inicio/entregas";
 import { PorQueSpp } from "@/components/inicio/por-que-spp";
 import { Portada } from "@/components/inicio/portada";
@@ -18,6 +19,7 @@ export default async function Inicio() {
 
   return (
     <>
+      <DatosParaGoogle />
       <BarraSuperior />
       <main className="flex-1">
         <Portada />
