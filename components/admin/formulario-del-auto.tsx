@@ -53,7 +53,7 @@ const etiquetas: Record<CampoDelAuto, string> = {
   serviceAlDia: "Service al día",
   mantenimientos: "Mantenimientos",
   descripcion: "Descripción",
-  tiktok: "Video de TikTok",
+  instagram: "Video de Instagram",
 };
 
 const sinSuscripcion = () => () => {};
@@ -287,15 +287,15 @@ export function FormularioDelAuto({
         />
       </Seccion>
 
-      <Seccion titulo="Video de TikTok">
+      <Seccion titulo="Video de Instagram">
         <CampoDeTexto
-          {...campo("tiktok")}
+          {...campo("instagram")}
           etiqueta="Link del video"
           opcional
           inputMode="url"
-          maxLength={largoMaximo.tiktok}
-          placeholder="Ej.: https://vm.tiktok.com/…"
-          ayuda="En TikTok: «Compartir» → «Copiar enlace», y pegalo acá. En la página del auto aparece un botón al video."
+          maxLength={largoMaximo.instagram}
+          placeholder="Ej.: https://www.instagram.com/reel/…"
+          ayuda="En Instagram, en el video: el avioncito («Compartir») → «Copiar enlace», y pegalo acá. En la página del auto aparece un botón al video."
         />
       </Seccion>
 

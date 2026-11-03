@@ -2,7 +2,7 @@ import { BotonWhatsapp } from "@/components/boton-whatsapp";
 import { agencia } from "@/lib/agencia";
 import { mensajeGeneral } from "@/lib/whatsapp";
 
-const nombresDeRedes = { instagram: "Instagram", facebook: "Facebook", tiktok: "TikTok" } as const;
+const nombresDeRedes = { instagram: "Instagram", facebook: "Facebook" } as const;
 
 /** Dirección, horarios, redes y mail aparecen solos cuando se cargan en `lib/agencia.ts`. */
 export function Pie() {

@@ -6,7 +6,7 @@ import { RecienIngresados } from "@/components/inicio/recien-ingresados";
 import { Servicios } from "@/components/inicio/servicios";
 import { VendeTuAuto } from "@/components/inicio/vende-tu-auto";
 import { Pie } from "@/components/pie";
-import { entregasDeEjemplo, videoDeEjemplo } from "@/lib/ejemplo";
+import { entregasDeEjemplo } from "@/lib/ejemplo";
 import { traerRecienIngresados } from "@/lib/traer-autos";
 
 // Se rearma sola cada 1 hora (en segundos): así entran los autos nuevos y los
@@ -20,7 +20,7 @@ export default async function Inicio() {
     <>
       <BarraSuperior />
       <main className="flex-1">
-        <Portada video={videoDeEjemplo} />
+        <Portada />
         <RecienIngresados autos={autos} />
         <PorQueSpp />
         <Servicios />

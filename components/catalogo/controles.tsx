@@ -130,7 +130,7 @@ export function Controles({
           <Panel
             etiqueta={puestos.length > 0 ? `Filtros (${puestos.length})` : "Filtros"}
             icono={<SlidersHorizontal aria-hidden="true" className="size-4" />}
-            panelClassName="inset-x-0 max-h-[70svh] overflow-y-auto pb-0"
+            panelClassName="inset-x-0 max-h-[70svh] overflow-x-hidden overflow-y-auto pb-0"
           >
             <div className="space-y-5">
               {filtros.map((filtro) => (

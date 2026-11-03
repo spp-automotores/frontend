@@ -39,11 +39,12 @@ terminado, `build` y `lint` tienen que pasar.
 - **Colores sólo desde los tokens** de `app/globals.css` (`bg-background`, `bg-card`, `text-foreground`,
   `text-muted-foreground`, `bg-primary`, `text-highlight`…), nunca un hex suelto en un componente.
   Los nombres son los de shadcn/ui, así el panel usa la misma paleta.
-- **El rojo de marca (`primary`) es fondo de botón con texto blanco**, nunca texto sobre negro (contraste
-  2,9:1). Para texto rojo, `text-highlight` (4,96:1 sobre el fondo).
+- **El rojo de marca (`primary`) es fondo de botón con texto blanco** (5,6:1), nunca texto sobre negro
+  (3,5:1). Para texto rojo chico, `text-highlight` (5,9:1 sobre el fondo). Para texto rojo grande
+  (24 px o más, o 19 px en negrita) y la línea del logo, `text-acento` (4,2:1).
 - El sitio es siempre oscuro: no hay modo claro.
-- **Tipografías:** Archivo (`font-sans` y `font-heading`; títulos anchos con `[font-stretch:125%]`) e
-  Instrument Serif sólo en cursiva (`font-serif italic`) para frases de acento.
+- **Tipografías:** Archivo (`font-sans` y `font-heading`; títulos anchos con `[font-stretch:125%]`) y
+  Montserrat (`font-acento`, en negrita) para las frases de acento en rojo y el logo grande de la portada.
 - **Íconos:** sólo `lucide-react`. Si falta uno (por ejemplo, el logo de WhatsApp), un SVG propio en
   `components/icons/` con la misma caja y el mismo grosor de trazo. Un emoji no es un ícono.
 - shadcn/ui es para el panel `/admin`. La parte pública se arma con componentes propios.

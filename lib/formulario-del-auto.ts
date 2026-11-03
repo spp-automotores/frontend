@@ -34,7 +34,7 @@ export type CampoDelAuto =
   | "serviceAlDia"
   | "mantenimientos"
   | "descripcion"
-  | "tiktok";
+  | "instagram";
 
 /** Lo escrito en cada campo, tal cual: vuelve al formulario si hay que corregir algo. */
 export type ValoresDelAuto = Partial<Record<CampoDelAuto, string>>;
@@ -65,7 +65,7 @@ const campos: CampoDelAuto[] = [
   "serviceAlDia",
   "mantenimientos",
   "descripcion",
-  "tiktok",
+  "instagram",
 ];
 
 /** Los que no pueden quedar vacíos (el formulario los marca). */
@@ -88,7 +88,7 @@ export const largoMaximo = {
   motor: 40,
   mantenimientos: 500,
   descripcion: 3000,
-  tiktok: 300,
+  instagram: 300,
 } as const;
 
 export const anioMinimo = 1950;
@@ -117,10 +117,11 @@ export function leerNumero(texto: string | undefined): number | null {
 }
 
 /**
- * El link de un video de TikTok, como lo copia el botón «Compartir» de la app. Se le sacan
- * los datos de seguimiento (`?_t=…`). `null` si está vacío; `undefined` si no es de TikTok.
+ * El link de un video de Instagram (un reel o una publicación), como lo copia el botón
+ * «Compartir» de la app. Se le sacan los datos de seguimiento (`?igsh=…`). `null` si está
+ * vacío; `undefined` si no es un link de Instagram.
  */
-export function leerLinkDeTiktok(texto: string | undefined): string | null | undefined {
+export function leerLinkDeInstagram(texto: string | undefined): string | null | undefined {
   const limpio = (texto ?? "").trim();
   if (limpio === "") return null;
   let url: URL;
@@ -129,8 +130,8 @@ export function leerLinkDeTiktok(texto: string | undefined): string | null | und
   } catch {
     return undefined;
   }
-  const deTiktok = url.hostname === "tiktok.com" || url.hostname.endsWith(".tiktok.com");
-  if (!deTiktok || url.pathname.length <= 1) return undefined;
+  const deInstagram = url.hostname === "instagram.com" || url.hostname.endsWith(".instagram.com");
+  if (!deInstagram || url.pathname.length <= 1) return undefined;
   return `https://${url.hostname}${url.pathname}`;
 }
 
@@ -163,9 +164,9 @@ export function leerFormularioDelAuto(valores: ValoresDelAuto): LecturaDelAuto {
   const motor = texto("motor");
   const mantenimientos = texto("mantenimientos");
   const descripcion = texto("descripcion");
-  const tiktok = leerLinkDeTiktok(texto("tiktok") ?? undefined);
-  if (tiktok === undefined && !errores.tiktok) {
-    errores.tiktok = "Pegá el link del video de TikTok (empieza con https://www.tiktok.com/ o https://vm.tiktok.com/).";
+  const instagram = leerLinkDeInstagram(texto("instagram") ?? undefined);
+  if (instagram === undefined && !errores.instagram) {
+    errores.instagram = "Pegá el link del video de Instagram (empieza con https://www.instagram.com/).";
   }
 
   const anio = leerNumero(valores.anio);
@@ -221,7 +222,7 @@ export function leerFormularioDelAuto(valores: ValoresDelAuto): LecturaDelAuto {
       precio,
       estado: estado as Estado,
       descripcion,
-      tiktok: tiktok ?? null,
+      instagram: instagram ?? null,
     },
   };
 }
@@ -249,7 +250,7 @@ export function valoresDeUnAuto(auto: Auto): ValoresDelAuto {
     serviceAlDia: textoDeSiNo(auto.serviceAlDia),
     mantenimientos: auto.mantenimientos ?? "",
     descripcion: auto.descripcion ?? "",
-    tiktok: auto.tiktok ?? "",
+    instagram: auto.instagram ?? "",
   };
 }
 
@@ -273,7 +274,7 @@ export function aFilaDeLaBase(datos: DatosDelAuto) {
     precio: datos.precio,
     estado: datos.estado,
     descripcion: datos.descripcion,
-    tiktok: datos.tiktok,
+    instagram: datos.instagram,
   };
 }
 
