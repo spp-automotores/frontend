@@ -6,12 +6,17 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { pedirPermisoDeSubida } from "@/app/admin/acciones";
 import type { Foto } from "@/lib/autos";
 import type { PermisoDeSubida } from "@/lib/cloudinary";
-import { type FotoDelFormulario, ladoMayorAlSubir, maximoDeFotos } from "@/lib/fotos-del-auto";
+import {
+  calidadAlAchicar,
+  type FotoDelFormulario,
+  ladoMayorAlAchicar,
+  limitesParaSubirTalCual,
+  maximoDeFotos,
+} from "@/lib/fotos-del-auto";
 import { cn } from "@/lib/utils";
 
-// Las fotos del formulario del auto. Cada foto nueva se achica en el celular (a ~2.000 px
-// de lado, menos de 1 MB) y sube directo a Cloudinary con un permiso firmado por el
-// servidor; se ve su avance y, si falla, «Reintentar». El orden se cambia con botones
+// Las fotos del formulario del auto. Cada foto nueva sube tal cual (sin achicarla, para no
+// perder calidad) directo a Cloudinary con un permiso firmado por el servidor; se ve su avance y, si falla, «Reintentar». El orden se cambia con botones
 // (arrastrar con el dedo es frágil en el celular); la primera es la portada. Lo que se
 // guarda viaja en el campo oculto `fotos`. Sin JavaScript se ven las que ya tiene y
 // quedan como están.
@@ -25,17 +30,31 @@ const sinSuscripcion = () => () => {};
 let contador = 0;
 const nuevaClave = () => `foto-${++contador}`;
 
-/** La foto, más chica y en JPG. Las fotos del celular vienen giradas: `createImageBitmap` las endereza. */
-async function achicar(archivo: File): Promise<Blob> {
+const tiposQueSubenTalCual = ["image/jpeg", "image/png", "image/webp"];
+
+/**
+ * La foto lista para subir: el archivo original si Cloudinary lo acepta así, o si no una copia
+ * más chica en JPG. Abrirla primero también descarta archivos que no son fotos. Las fotos del
+ * celular vienen giradas: `createImageBitmap` las endereza (y Cloudinary también, al mostrarlas).
+ */
+async function prepararFoto(archivo: File): Promise<Blob> {
   const imagen = await createImageBitmap(archivo);
-  const escala = Math.min(1, ladoMayorAlSubir / Math.max(imagen.width, imagen.height));
+  if (
+    tiposQueSubenTalCual.includes(archivo.type) &&
+    archivo.size <= limitesParaSubirTalCual.bytes &&
+    imagen.width * imagen.height <= limitesParaSubirTalCual.pixeles
+  ) {
+    imagen.close();
+    return archivo;
+  }
+  const escala = Math.min(1, ladoMayorAlAchicar / Math.max(imagen.width, imagen.height));
   const lienzo = document.createElement("canvas");
   lienzo.width = Math.round(imagen.width * escala);
   lienzo.height = Math.round(imagen.height * escala);
   lienzo.getContext("2d")!.drawImage(imagen, 0, 0, lienzo.width, lienzo.height);
   imagen.close();
   return new Promise((listo, fallo) =>
-    lienzo.toBlob((foto) => (foto ? listo(foto) : fallo(new Error("toBlob"))), "image/jpeg", 0.85),
+    lienzo.toBlob((foto) => (foto ? listo(foto) : fallo(new Error("toBlob"))), "image/jpeg", calidadAlAchicar),
   );
 }
 
@@ -99,7 +118,7 @@ export function FotosDelAuto({
       }
       let foto: Blob;
       try {
-        foto = await achicar(archivo);
+        foto = await prepararFoto(archivo);
       } catch {
         cambiar(clave, { estado: "fallo", error: "No se pudo abrir. Probá con otra foto." });
         return;
