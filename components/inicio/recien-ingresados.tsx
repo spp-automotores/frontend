@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Aparecer } from "@/components/aparecer";
 import { ListaDeAutos } from "@/components/lista-de-autos";
 import { TituloDeSeccion } from "@/components/titulo-de-seccion";
+import { VerTodos } from "@/components/ver-todos";
 import type { Auto } from "@/lib/autos";
 
 export function RecienIngresados({ autos }: { autos: Auto[] }) {
@@ -12,8 +13,9 @@ export function RecienIngresados({ autos }: { autos: Auto[] }) {
       aria-labelledby="titulo-recien-ingresados"
       className="mx-auto w-full max-w-6xl scroll-mt-16 py-16 sm:py-24"
     >
-      <Aparecer className="px-4 sm:px-6">
+      <Aparecer className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 px-4 sm:px-6">
         <TituloDeSeccion id="titulo-recien-ingresados">Recién ingresados</TituloDeSeccion>
+        <VerTodos href="/autos" etiqueta="Ver todos los vehículos" />
       </Aparecer>
       <Aparecer className="mt-8" escalonado>
         <ListaDeAutos autos={autos} enColumnas={4} escalonado />
@@ -23,7 +25,7 @@ export function RecienIngresados({ autos }: { autos: Auto[] }) {
           href="/autos"
           className="inline-flex min-h-11 items-center gap-2 rounded-full border border-foreground/30 px-5 text-sm font-semibold transition-transform duration-150 ease-out hover:bg-foreground/10 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
-          Ver todos los autos
+          Ver todos los vehículos
           <ArrowRight aria-hidden="true" className="size-4" />
         </Link>
       </Aparecer>

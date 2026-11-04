@@ -58,15 +58,18 @@ export function BarraSuperior({ enPortada = true }: { enPortada?: boolean }) {
             href="/autos"
             className="inline-flex min-h-10 items-center rounded-full px-2 text-sm min-[400px]:px-2.5 font-semibold hover:bg-foreground/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:px-3.5"
           >
-            Autos
+            Vehículos
           </Link>
-          {/* Siempre a la vista: avisa que existen los favoritos y no corre «Autos» al aparecer. */}
+          {/* Siempre a la vista: avisa que existen los favoritos y no corre «Vehículos» al aparecer. */}
           <Link
             href="/favoritos"
             aria-label={cantidad > 0 ? `Favoritos (${cantidad})` : "Favoritos"}
-            className="relative inline-flex size-10 items-center justify-center rounded-full hover:bg-foreground/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="group/favoritos relative inline-flex size-10 items-center justify-center rounded-full hover:bg-foreground/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
-            <Heart aria-hidden="true" className="size-[18px]" />
+            <Heart
+              aria-hidden="true"
+              className="size-[18px] transition-[color,fill,scale] duration-200 ease-out group-hover/favoritos:scale-115 group-hover/favoritos:fill-highlight/30 group-hover/favoritos:text-highlight motion-reduce:group-hover/favoritos:scale-100"
+            />
             {cantidad > 0 && (
               <span
                 aria-hidden="true"
