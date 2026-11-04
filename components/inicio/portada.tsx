@@ -29,7 +29,7 @@ export function Portada() {
           </span>
         </h1>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
-          <BotonPortada href="/autos" texto="Ver autos" tono="rojo" />
+          <BotonPortada href="/autos" texto="Ver vehículos" tono="rojo" />
           <BotonPortada href="#vende-tu-auto" texto="Vendé tu auto" tono="claro" flecha="abajo" />
         </div>
       </div>
