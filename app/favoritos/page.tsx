@@ -57,7 +57,7 @@ export default async function Favoritos() {
                 Tocá el corazón de un auto para tenerlo acá.
               </p>
               <Link href="/autos" className={`${boton} mt-6`}>
-                Ver autos
+                Ver vehículos
               </Link>
             </div>
           }
