@@ -1,9 +1,6 @@
-import Link from "next/link";
+import { BotonPortada } from "@/components/inicio/boton-portada";
 import { LogoGrande } from "@/components/inicio/logo-grande";
 import { agencia } from "@/lib/agencia";
-
-const boton =
-  "inline-flex min-h-12 items-center justify-center rounded-full px-6 text-sm font-semibold transition-transform duration-150 ease-out active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 /** La portada del Inicio: el logo de la agencia en grande y, debajo, la frase de Sebastián. */
 export function Portada() {
@@ -31,17 +28,10 @@ export function Portada() {
             {agencia.frase.final}
           </span>
         </h1>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link href="/autos" className={`${boton} bg-foreground text-background`}>
-            Ver autos
-          </Link>
-          <a href="#vende-tu-auto" className={`${boton} border border-foreground/30 text-foreground`}>
-            Vendé tu auto
-          </a>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+          <BotonPortada href="/autos" texto="Ver autos" tono="rojo" />
+          <BotonPortada href="#vende-tu-auto" texto="Vendé tu auto" tono="claro" flecha="abajo" />
         </div>
-        <p className="mt-10 text-xs text-muted-foreground">
-          Sitio en preparación: las fotos de entregas son de ejemplo.
-        </p>
       </div>
     </section>
   );
