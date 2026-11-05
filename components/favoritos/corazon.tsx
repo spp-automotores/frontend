@@ -37,13 +37,13 @@ export function Corazon({
         alternarFavorito(id);
       }}
       className={cn(
-        "group/corazon grid size-11 place-items-center rounded-full outline-none",
+        "group/corazon grid size-11 cursor-pointer place-items-center rounded-full outline-none",
         className,
       )}
     >
       <span
         className={cn(
-          "grid size-9 place-items-center rounded-full transition-transform duration-150 ease-out group-active/corazon:scale-90 group-focus-visible/corazon:outline-2 group-focus-visible/corazon:outline-offset-2 group-focus-visible/corazon:outline-ring",
+          "grid size-9 place-items-center rounded-full transition-transform duration-200 ease-out group-hover/corazon:scale-115 group-active/corazon:scale-90 motion-reduce:group-hover/corazon:scale-100 group-focus-visible/corazon:outline-2 group-focus-visible/corazon:outline-offset-2 group-focus-visible/corazon:outline-ring",
           circuloClassName,
         )}
       >
@@ -51,8 +51,11 @@ export function Corazon({
           aria-hidden="true"
           onAnimationEnd={() => setLatido(false)}
           className={cn(
-            "size-[18px]",
-            guardado ? "fill-current text-highlight" : "text-foreground",
+            "size-[18px] transition-colors duration-200 ease-out",
+            // Al pasar el mouse se adelanta cómo queda guardado: rojo.
+            guardado
+              ? "fill-current text-highlight"
+              : "text-foreground group-hover/corazon:fill-highlight/30 group-hover/corazon:text-highlight",
             latido && "motion-safe:animate-[latido_320ms_ease-out]",
           )}
         />

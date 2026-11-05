@@ -2,7 +2,7 @@ import { CircleCheck } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { BarraDeLaAdministracion } from "@/components/admin/barra";
-import { Resumen, ResumenDeRelleno } from "@/components/admin/resumen";
+import { Tablero, TableroDeRelleno } from "@/components/admin/tablero";
 import { Tareas } from "@/components/admin/tareas";
 import {
   FilasDeRelleno,
@@ -19,8 +19,8 @@ import { traerAutos } from "@/lib/traer-autos";
 type AutosDelPanel = Promise<Auto[] | null>;
 
 // El inicio de la administración, «tareas primero»: arriba lo que se viene a hacer,
-// abajo la lista de los autos. La barra y las tareas salen enseguida; el resumen
-// y la lista llegan cuando contesta la base. Después de guardar un auto, arriba de todo
+// después «Cómo va» (el tablero) y abajo la lista de los autos. La barra y las tareas
+// salen enseguida; el tablero y la lista llegan cuando contesta la base. Después de guardar un auto, arriba de todo
 // va el aviso de listo (`?cargado=<id>` o `?editado=<id>`).
 export default async function Administracion({ searchParams }: PageProps<"/admin">) {
   const { email, supabase } = await verificarAdmin();
@@ -45,12 +45,10 @@ export default async function Administracion({ searchParams }: PageProps<"/admin
             <AvisoDeGuardado autos={autos} {...guardado} />
           </Suspense>
         )}
-        <div className="mb-5 min-h-5">
-          <Suspense fallback={<ResumenDeRelleno />}>
-            <ResumenConDatos autos={autos} />
-          </Suspense>
-        </div>
         <Tareas />
+        <Suspense fallback={<TableroDeRelleno />}>
+          <TableroConDatos autos={autos} />
+        </Suspense>
         <TusAutos>
           <Suspense fallback={<FilasDeRelleno />}>
             <ListaConDatos autos={autos} />
@@ -61,9 +59,10 @@ export default async function Administracion({ searchParams }: PageProps<"/admin
   );
 }
 
-async function ResumenConDatos({ autos }: { autos: AutosDelPanel }) {
+async function TableroConDatos({ autos }: { autos: AutosDelPanel }) {
   const lista = await autos;
-  return lista && <Resumen autos={lista} />;
+  // Si la base no contestó, la lista de abajo ya lo avisa.
+  return lista && <Tablero autos={lista} />;
 }
 
 async function ListaConDatos({ autos }: { autos: AutosDelPanel }) {
