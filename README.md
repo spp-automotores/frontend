@@ -43,6 +43,12 @@ adaptador de Next.js. Lo arma y lo publica Cloudflare desde GitHub (Workers Buil
   Si una rama que no es `main` no encuentra las de pruebas, el armado se corta. Las fotos también se
   separan: carpeta `autos` en producción y `autos-pruebas` en lo demás. Fuera de producción, el panel
   muestra un cartel «Pruebas».
+- **La tarea diaria** (12:00 UTC, sólo en producción) le pide un auto a cada base para que Supabase
+  no las pause. Va directo a las bases, sin pasar por Next.js (arrancarlo se pasaba de los 10 ms de
+  CPU del plan gratis). Lee cuatro **secretos** del Worker de producción:
+  `TAREA_BASE_PRINCIPAL_URL`, `TAREA_BASE_PRINCIPAL_CLAVE`, `TAREA_BASE_PRUEBAS_URL` y
+  `TAREA_BASE_PRUEBAS_CLAVE` (las mismas direcciones y claves públicas de arriba). Se cargan con
+  `npx wrangler secret put <NOMBRE>`; un deploy no los borra. Si falta uno, la tarea falla y lo dice.
 - La configuración del Worker está en `wrangler.jsonc`; cómo guarda las páginas, en
   `open-next.config.ts`; lo que se suma al Worker (la tarea diaria y el `noindex` de los links
   `*.workers.dev`), en `worker.ts`.
