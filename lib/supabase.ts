@@ -29,9 +29,3 @@ export const supabase = createClient(url, clave, {
       }),
   },
 });
-
-/** La misma conexión, pero sin guardar la respuesta: para la tarea diaria. */
-export const supabaseSinGuardar = createClient(url, clave, {
-  auth: { persistSession: false, autoRefreshToken: false },
-  global: { fetch: (entrada, opciones) => fetch(entrada, { ...opciones, cache: "no-store" }) },
-});

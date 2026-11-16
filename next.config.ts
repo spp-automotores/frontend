@@ -39,9 +39,6 @@ const nextConfig: NextConfig = {
     CARPETA_DE_FOTOS: esProduccion ? "autos" : "autos-pruebas",
     // Para el cartel «Pruebas» del panel.
     ES_PRODUCCION: esProduccion ? "si" : "no",
-    // La tarea diaria (sólo corre en producción) también despierta la base de pruebas.
-    SUPABASE_PRUEBAS_URL: pruebas.url ?? "",
-    SUPABASE_PRUEBAS_PUBLISHABLE_KEY: pruebas.clave ?? "",
   },
   images: {
     // Las fotos se piden al tamaño justo a su propio servidor (ver el archivo),
